@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export const BASE_URL = "http://localhost:3000";
+// export const BASE_URL = "http://localhost:3000";
+export const BASE_URL = "https://betting-app-backend-15gg.onrender.com";
 // Create an Axios instance
 const axiosInstance = axios.create({
   baseURL: `${BASE_URL}/api/v1`, // Set the base URL once here
@@ -9,4 +10,4 @@ const axiosInstance = axios.create({
   },
 });
 
-export default axiosInstance ;
+export default axiosInstance;
