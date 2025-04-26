@@ -772,8 +772,11 @@ import toast from "react-hot-toast";
 import { userService } from "../../Services/userService";
 import { setUser } from "../../features/userSlice";
 import Navbar from "../Navbar";
+import { WebSocket_URL } from "../../Services/axiosInstance";
 
-const socket = io("http://localhost:3000");
+// const socket = io("http://localhost:3000");
+
+const socket = io(WebSocket_URL);
 
 export default function HeadTailGame() {
   // const { theme } = useTheme();
