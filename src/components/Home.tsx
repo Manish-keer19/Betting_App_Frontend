@@ -3,7 +3,12 @@ import React from "react";
 import Navbar from "./Navbar";
 import { Link } from "react-router-dom";
 
+
+import { useSelector } from "react-redux";
+
 const Home: React.FC = () => {
+
+  const user =useSelector((state: any) => state.user);
   return (
     <div
       className="
@@ -17,12 +22,19 @@ const Home: React.FC = () => {
           gaming world.
         </p>
 
-        <Link
-          to={"/head-tail"}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
-        >
-          Head Tail Game
-        </Link>
+
+        {
+          user&&(
+            <Link
+            to={"/head-tail"}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+          >
+            Head Tail Game
+          </Link>
+          )
+        }
+
+       
       </div>
     </div>
   );

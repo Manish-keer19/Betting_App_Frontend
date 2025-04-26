@@ -363,7 +363,7 @@ const Navbar: React.FC = () => {
             </Link>
           </li>
 
-          {user.Role === "ADMIN" && (
+          { user &&user?.Role === "ADMIN" && (
             <Link to="/admin" className={`transition ${hoverColor}`}>
               Admin
             </Link>
@@ -484,7 +484,7 @@ const Navbar: React.FC = () => {
                 Contact
               </Link>
             </li>
-            {user.Role === "ADMIN" && (
+            {user && user?.Role === "ADMIN" && (
               <li>
                 <Link
                   to="/admin"
