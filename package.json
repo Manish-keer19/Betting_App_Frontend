@@ -12,6 +12,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.7.0",
     "axios": "^1.8.4",
+    "framer-motion": "^12.9.2",
     "install": "^0.13.0",
     "lucide-react": "^0.503.0",
     "npm": "^11.3.0",

@@ -330,7 +330,7 @@ const Navbar: React.FC = () => {
         {/* Logo + Title */}
         <div className="flex items-center gap-3">
           <img src={logo} alt="Logo" className="h-10 w-10 rounded-full" />
-          <span className="text-2xl font-bold">BeatABack</span>
+          <span className="text-2xl font-bold">BetABack</span>
         </div>
 
         {/* Hamburger menu (mobile only) */}
