@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import io from "socket.io-client";
 import { TfiReload } from "react-icons/tfi";
@@ -41,6 +41,12 @@ export default function HeadTailGame() {
     input: "bg-gray-800 text-white placeholder-gray-500",
   };
 
+  const choiceRef = useRef(choice);
+
+  useEffect(() => {
+    choiceRef.current = choice; // Update the ref whenever the choice changes
+  }, [choice]);
+
   useEffect(() => {
     socket.on("currentRound", ({ roundId, startedAt }) => {
       setRoundId(roundId);
@@ -62,15 +68,31 @@ export default function HeadTailGame() {
     //   console.log("Round Result:", message);
     // });
 
-    socket.on("roundResult", ({ roundId, result, message }) => {
-      console.log("Received round result:", roundId, result, message);
-      setStatus(`Round ${roundId} Winner: ${result}`);
-      console.log("choice", choice, "result", result);
-      if (choice === result) {
+    // socket.on("roundResult", ({ roundId, result, message }) => {
+    //   console.log("Received round result:", roundId, result, message);
+    //   setStatus(`Round ${roundId} Winner: ${result}`);
+    //   console.log("choice", choice, "result", result);
+    //   if (choice === result) {
+    //     toast.success(`You won! Result: ${result}`, { duration: 10000 });
+    //   } else {
+    //     toast.error(`You lost! Result: ${result}`, { duration: 10000 });
+    //   }
+    //   setChoice(null);
+    //   setBetAmount(10);
+    //   setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
+    // });
+
+    socket.on("roundResult", ({ roundId, result }) => {
+      // console.log("choiceRef", choiceRef.current, "result", result);
+      const currentChoice = choiceRef.current; // Access the latest choice from the ref
+      console.log("choice", currentChoice, "result", result);
+
+      if (currentChoice === result) {
         toast.success(`You won! Result: ${result}`, { duration: 10000 });
       } else {
         toast.error(`You lost! Result: ${result}`, { duration: 10000 });
       }
+
       setChoice(null);
       setBetAmount(10);
       setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
