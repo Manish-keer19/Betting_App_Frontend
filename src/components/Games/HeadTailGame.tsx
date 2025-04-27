@@ -65,11 +65,11 @@ export default function HeadTailGame() {
     socket.on("roundResult", ({ roundId, result, message }) => {
       console.log("Received round result:", roundId, result, message);
       setStatus(`Round ${roundId} Winner: ${result}`);
-
+      console.log("choice", choice, "result", result);
       if (choice === result) {
-        toast.success(`You won! Result: ${result}`, { duration: 3000 });
+        toast.success(`You won! Result: ${result}`, { duration: 10000 });
       } else {
-        toast.error(`You lost! Result: ${result}`, { duration: 3000 });
+        toast.error(`You lost! Result: ${result}`, { duration: 10000 });
       }
       setChoice(null);
       setBetAmount(10);
@@ -323,5 +323,3 @@ export default function HeadTailGame() {
     </>
   );
 }
-
-
