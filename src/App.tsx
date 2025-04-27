@@ -9,6 +9,8 @@ import { store } from "./app/store";
 import { Toaster } from "react-hot-toast";
 import AdminDashboard from "./Admin/AdminDashboard";
 import HeadTailGame from "./components/Games/HeadTailGame";
+import NotFound from "./components/NotFound";
+import { Allgames } from "./components/Games/Allgames";
 
 
 
@@ -42,6 +44,15 @@ function App() {
     {
       path:"/head-tail",
       element: <HeadTailGame />
+    },
+    {
+      path:"/games",
+      element: <Allgames />
+    },
+    {
+      path:"*",
+      element:<NotFound/>
+
     }
     
   ]);

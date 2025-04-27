@@ -328,7 +328,10 @@ const Navbar: React.FC = () => {
     <nav className={`${bgColor} ${textColor} shadow-md`}>
       <div className="flex justify-between items-center p-4 max-w-6xl mx-auto">
         {/* Logo + Title */}
-        <div className="flex items-center gap-3">
+        <div
+          className="flex items-center gap-3 cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           <img src={logo} alt="Logo" className="h-10 w-10 rounded-full" />
           <span className="text-2xl font-bold">BetABack</span>
         </div>
@@ -363,7 +366,7 @@ const Navbar: React.FC = () => {
             </Link>
           </li>
 
-          { user &&user?.Role === "ADMIN" && (
+          {user && user?.Role === "ADMIN" && (
             <Link to="/admin" className={`transition ${hoverColor}`}>
               Admin
             </Link>
