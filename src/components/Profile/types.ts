@@ -18,4 +18,5 @@ export type UserData = {
   token?: string;
   referredBy?: string;
   referralCode?: string; //
+  createdAt?: string;
 };

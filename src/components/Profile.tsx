@@ -21,6 +21,9 @@ export const Profile = () => {
   const userData = useSelector((state: any) => state.user);
   const [user, setUserdata] = useState<UserData>(userData);
   const [isLoading, setIsLoading] = useState(false);
+  const [memberSince] = useState(
+    new Date(userData.createdAt).toLocaleDateString()
+  );
 
   useEffect(() => {
     setUserdata(userData);
@@ -236,7 +239,7 @@ export const Profile = () => {
                         },
                         {
                           label: "Member Since",
-                          value: new Date().toLocaleDateString(),
+                          value: memberSince,
                           icon: "calendar",
                         },
                       ].map((item) => (
