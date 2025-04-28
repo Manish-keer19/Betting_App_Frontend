@@ -30,6 +30,8 @@ export default function HeadTailGame() {
   >([]);
   const [user, setUserdata] = useState(userData);
 
+  const [isUserBeted, setIsUserBeted] = useState<Boolean>(false);
+
   const colors = {
     bg: "bg-black",
     card: "bg-gray-900",
@@ -49,6 +51,7 @@ export default function HeadTailGame() {
 
   useEffect(() => {
     socket.on("currentRound", ({ roundId, startedAt }) => {
+      setIsUserBeted(false); // Reset user bet status for the new round
       setRoundId(roundId);
       startTimer(startedAt);
     });
@@ -84,6 +87,9 @@ export default function HeadTailGame() {
 
     socket.on("roundResult", ({ roundId, result }) => {
       // console.log("choiceRef", choiceRef.current, "result", result);
+
+      setIsUserBeted(false); // Reset user bet status for the next round
+      setStatus(`Round ${roundId} Winner: ${result}`);
       const currentChoice = choiceRef.current; // Access the latest choice from the ref
       console.log("choice", currentChoice, "result", result);
 
@@ -159,6 +165,7 @@ export default function HeadTailGame() {
 
   const placeBet = () => {
     const amount = Number(betAmount);
+    setIsUserBeted(true);
     if (!choice) return setStatus("Select Head or Tail first");
     if (isNaN(amount) || amount <= 0)
       return setStatus("Enter valid bet amount");
@@ -169,6 +176,13 @@ export default function HeadTailGame() {
       balance: prev.balance - amount,
     }));
 
+    if (isUserBeted) {
+      toast.error("You already placed a bet in this round", {
+        duration: 5000,
+      });
+      return;
+    }
+
     socket.emit("placeBet", {
       userId: userData._id,
       choice,
@@ -176,7 +190,7 @@ export default function HeadTailGame() {
       roundId,
     });
 
-    setBetAmount(0); // Reset bet amount after placing the bet
+    setBetAmount(10); // Reset bet amount after placing the bet
   };
 
   const getUserBalance = async () => {

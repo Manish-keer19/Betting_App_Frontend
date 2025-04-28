@@ -16,4 +16,6 @@ export type UserData = {
   Role: string;
   balance: number;
   token?: string;
+  referredBy?: string;
+  referralCode?: string; //
 };

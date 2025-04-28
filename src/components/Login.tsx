@@ -1,89 +1,3 @@
-// import React, { useState } from "react";
-// import { useTheme } from "../utils/ThemeContext";
-// import logo from "../assets/logo.jpg"; // Ensure the path to your logo is correct
-// import { authService } from "../Services/authService";
-// import { useDispatch } from "react-redux";
-// import { setUser } from "../features/userSlice";
-// import { useNavigate } from "react-router-dom";
-
-// const Login: React.FC = () => {
-//     const dispatch = useDispatch();
-//     const navigate = useNavigate();
-//   const [email, setEmail] = useState<string>("");
-//   const [password, setPassword] = useState<string>("");
-//   const { theme } = useTheme();
-//   const isGreen = theme === "green";
-
-//   const handleLogin = async () => {
-//     try {
-//       console.log("login attempt", email, password);
-//       const data = {
-//         email: email,
-//         password: password,
-//       };
-//      const res = await authService.login(data);
-//         console.log("Login response:", res.data);
-//         if (res.data.success) {
-//             console.log("Login successful:", res.data);
-
-//             dispatch(setUser(res.data.user));
-//             navigate("/profile");
-
-//         } else {
-//             console.error("Login failed:", res.data.message);
-//         }
-
-//     } catch (error) {
-//       console.log("cloud not login", error);
-//     }
-//   };
-
-//   const bg = isGreen ? "bg-green-900" : "bg-zinc-900";
-//   const text = isGreen ? "text-green-100" : "text-white";
-//   const inputBg = isGreen
-//     ? "bg-green-100 text-green-900"
-//     : "bg-zinc-800 text-white";
-//   const inputFocus = isGreen ? "focus:ring-green-400" : "focus:ring-zinc-600";
-//   const button = isGreen
-//     ? "bg-green-700 hover:bg-green-600"
-//     : "bg-zinc-800 hover:bg-zinc-700";
-
-//   return (
-//     <div
-//       className={`min-h-screen flex justify-center items-center ${bg} ${text}`}
-//     >
-//       <div className="w-full max-w-md p-8 rounded-xl shadow-lg">
-//         <div className="flex justify-center mb-6">
-//           <img src={logo} alt="Logo" className="h-16 w-16 rounded-full" />
-//         </div>
-//         <h2 className="text-3xl font-bold mb-6 text-center">Login</h2>
-
-//         <input
-//           type="email"
-//           placeholder="Email"
-//           className={`w-full px-4 py-2 rounded ${inputBg} focus:outline-none focus:ring-2 ${inputFocus}`}
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//         />
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           className={`w-full px-4 py-2 rounded ${inputBg} focus:outline-none focus:ring-2 ${inputFocus}`}
-//         />
-//         <button
-//           onClick={handleLogin}
-//           className={`w-full py-2 rounded ${button} text-white font-semibold transition`}
-//         >
-//           Login
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;
 
 import React, { useState } from "react";
 import { useTheme } from "../utils/ThemeContext";
@@ -91,7 +5,7 @@ import logo from "../assets/logo.jpg";
 import { authService } from "../Services/authService";
 import { useDispatch } from "react-redux";
 import { setUser } from "../features/userSlice";
-import { useNavigate} from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -169,7 +83,16 @@ const Login: React.FC = () => {
             {isLoggedIn ? "Logging in..." : "Login"}
           </button>
         </div>
+
+        <div className="mt-4 text-center text-gray-400">
+        Don't have an account?{" "}
+        <Link to="/signup" className="text-green-500 hover:underline">
+          Sign Up
+        </Link>
+        </div>
       </div>
+
+    
     </div>
   );
 };
