@@ -144,6 +144,25 @@ class UserService {
       throw error;
     }
   }
+
+  async changePassword(data: any, token: string) {
+    try {
+      const res = await axiosInstance.post("/auth/change-password", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("Change password response:", res.data);
+      if (res.data.success) {
+        return res.data;
+      }
+    } catch (error) {
+      console.error("Error changing password:", error);
+      throw error;
+    }
+  }
+
+ 
 }
 
 export const userService = new UserService();

@@ -83,6 +83,11 @@ const Login: React.FC = () => {
             {isLoggedIn ? "Logging in..." : "Login"}
           </button>
         </div>
+        
+        <div className="mt-4 text-center text-gray-400">
+          <Link to="/reset-password" className="text-green-500 hover:underline">
+            Forgot Password?
+          </Link>
 
         <div className="mt-4 text-center text-gray-400">
         Don't have an account?{" "}
@@ -93,6 +98,7 @@ const Login: React.FC = () => {
       </div>
 
     
+    </div>
     </div>
   );
 };

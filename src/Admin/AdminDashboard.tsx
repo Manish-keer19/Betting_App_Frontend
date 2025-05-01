@@ -1427,6 +1427,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { adminService } from "../Services/adminService";
 import { useSelector } from "react-redux";
+import Navbar from "../components/Navbar";
 
 type BankDetails = {
   _id: string;
@@ -1663,8 +1664,9 @@ const AdminDashboard = () => {
   const isWithdrawalTab = activeTab.includes("withdrawals");
 
   return (
-    <div className="p-4 md:p-6 bg-gray-900 min-h-screen">
-      <div className="max-w-7xl mx-auto">
+    <div className=" bg-gray-900 min-h-screen">
+      <Navbar/>
+      <div className="max-w-7xl mx-auto mt-[7vh] *:p-4 md:p-6">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
           <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>

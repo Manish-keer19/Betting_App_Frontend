@@ -11,7 +11,7 @@ import AdminDashboard from "./Admin/AdminDashboard";
 import HeadTailGame from "./components/Games/HeadTailGame";
 import NotFound from "./components/NotFound";
 import { Allgames } from "./components/Games/Allgames";
-
+import ResetPassword from "./components/Profile/ResetPassword";
 
 
 function App() {
@@ -19,48 +19,47 @@ function App() {
     {
       path: "/",
       element: <Home />,
-     
     },
     {
+      path: "/login",
+      element: <Login />,
+    },
 
-      path:"/login",
-      element:<Login/>,
-    },
-    
     {
+      path: "/signup",
+      element: <Signup />,
+    },
+    {
+      path: "/profile",
+      element: <Profile />,
+    },
+    {
+      path: "/admin",
+      element: <AdminDashboard />,
+    },
+    {
+      path: "/head-tail",
+      element: <HeadTailGame />,
+    },
+    {
+      path: "/games",
+      element: <Allgames />,
+    },
+    {
+      path: "/reset-password",
+      element: <ResetPassword/>,
+    },
 
-      path:"/signup",
-      element:<Signup/>,
-    },
     {
-
-      path:"/profile",
-      element:<Profile/>,
+      path: "*",
+      element: <NotFound />,
     },
-    {
-      path:"/admin",
-      element:<AdminDashboard/>
-    },
-    {
-      path:"/head-tail",
-      element: <HeadTailGame />
-    },
-    {
-      path:"/games",
-      element: <Allgames />
-    },
-    {
-      path:"*",
-      element:<NotFound/>
-
-    }
-    
   ]);
   return (
     <Provider store={store}>
-      <RouterProvider router={route}  />
+      <RouterProvider router={route} />
       <Toaster />
-      </Provider>
+    </Provider>
   );
 }
 

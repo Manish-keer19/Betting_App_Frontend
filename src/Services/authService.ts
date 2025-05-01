@@ -47,6 +47,19 @@ class AuthService {
       throw error;
     }
   }
+
+  async resetPassword(data: any) {
+    try {
+      const res = await axiosInstance.post("/auth/reset-password", data);
+      console.log("Reset password response:", res.data);
+      if (res.data.success) {
+        return res.data;
+      }
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      throw error;
+    }
+  }
 }
 
 export const authService = new AuthService();

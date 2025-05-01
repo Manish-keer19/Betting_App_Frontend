@@ -127,20 +127,20 @@ export default function HeadTailGame() {
       );
     });
 
-    // socket.on("wonMessage", ({ message, amount }) => {
-    //   // setStatus(`You won: ₹${amount}`);
-    //   console.log("🎉 Win Message Received:", message, amount);
-    //   // setUserdata((prev: any) => ({
-    //   //   ...prev,
-    //   //   balance: prev.balance + amount,
-    //   // }));
-    //   // dispatch(
-    //   //   setUser({
-    //   //     ...userData,
-    //   //     balance: userData.balance,
-    //   //   })
-    //   // );
-    // });
+    socket.on("wonMessage", ({ message, amount }) => {
+      // setStatus(`You won: ₹${amount}`);
+      console.log("🎉 Win Message Received:", message, amount);
+      // setUserdata((prev: any) => ({
+      //   ...prev,
+      //   balance: prev.balance + amount,
+      // }));
+      // dispatch(
+      //   setUser({
+      //     ...userData,
+      //     balance: userData.balance,
+      //   })
+      // );
+    });
 
     socket.on("error", (message) => {
       setStatus(`Error: ${message}`);
@@ -163,36 +163,69 @@ export default function HeadTailGame() {
 
   const handleChoice = (c: "head" | "tail") => setChoice(c);
 
+  // const placeBet = () => {
+  //   const amount = Number(betAmount);
+  //   setIsUserBeted(true);
+  //   if (!choice) return setStatus("Select Head or Tail first");
+  //   if (isNaN(amount) || amount <= 0)
+  //     return setStatus("Enter valid bet amount");
+  //   if (userData.balance < amount) return setStatus("Insufficient balance");
+
+  //   setUserdata((prev: any) => ({
+  //     ...prev,
+  //     balance: prev.balance - amount,
+  //   }));
+
+  //   if (isUserBeted) {
+  //     toast.error("You already placed a bet in this round", {
+  //       duration: 5000,
+  //     });
+  //     return;
+  //   }
+
+  //   socket.emit("placeBet", {
+  //     userId: userData._id,
+  //     choice,
+  //     amount,
+  //     roundId,
+  //   });
+
+  //   setBetAmount(10); // Reset bet amount after placing the bet
+  // };
+
+
+
   const placeBet = () => {
     const amount = Number(betAmount);
-    setIsUserBeted(true);
+  
     if (!choice) return setStatus("Select Head or Tail first");
     if (isNaN(amount) || amount <= 0)
       return setStatus("Enter valid bet amount");
     if (userData.balance < amount) return setStatus("Insufficient balance");
-
-    setUserdata((prev: any) => ({
-      ...prev,
-      balance: prev.balance - amount,
-    }));
-
+  
     if (isUserBeted) {
       toast.error("You already placed a bet in this round", {
         duration: 5000,
       });
       return;
     }
-
+  
+    setUserdata((prev: any) => ({
+      ...prev,
+      balance: prev.balance - amount,
+    }));
+  
     socket.emit("placeBet", {
       userId: userData._id,
       choice,
       amount,
       roundId,
     });
-
+  
+    setIsUserBeted(true); // ✅ Set this AFTER placing the bet
     setBetAmount(10); // Reset bet amount after placing the bet
   };
-
+  
   const getUserBalance = async () => {
     try {
       if (!user?.token) return toast.error("Token not found");
