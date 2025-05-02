@@ -105,7 +105,7 @@ export default function HeadTailGame() {
 
       setChoice(null);
       setBetAmount(10);
-      setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
+      // setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
     });
 
     socket.on("newRound", ({ roundId, startedAt }) => {
@@ -135,15 +135,13 @@ export default function HeadTailGame() {
       console.log("User registered in room", roomName);
     });
 
-    if (choice) {
-      console.log("Choice is null, waiting for user to select.");
-      socket.on("roundResultToAll", ({ room, roundId, result }) => {
-        console.log(`Room: ${room} → Round Result:`, roundId, result);
-        setResultHistory((prev) =>
-          [...prev, { room, roundId, result }].slice(-5)
-        );
-      });
-    }
+    socket.on("roundResultToAll", ({ room, roundId, result }) => {
+      console.log(`Room: ${room} → Round Result:`, roundId, result);
+
+      setResultHistory((prev) =>
+        [...prev, { room, roundId, result }].slice(-5)
+      );
+    });
 
     socket.on("error", (message) => {
       setStatus(`Error: ${message}`);
