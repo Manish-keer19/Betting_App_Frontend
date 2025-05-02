@@ -135,7 +135,7 @@ export default function HeadTailGame() {
       console.log("User registered in room", roomName);
     });
 
-    if (!choice) {
+    if (choice) {
       console.log("Choice is null, waiting for user to select.");
       socket.on("roundResultToAll", ({ room, roundId, result }) => {
         console.log(`Room: ${room} → Round Result:`, roundId, result);
