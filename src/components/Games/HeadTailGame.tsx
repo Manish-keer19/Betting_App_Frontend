@@ -93,6 +93,10 @@ export default function HeadTailGame() {
       const currentChoice = choiceRef.current; // Access the latest choice from the ref
       console.log("choice", currentChoice, "result", result);
 
+      if (currentChoice === null) {
+        toast.error("You didn't place a bet this round", { duration: 10000 });
+        return;
+      }
       if (currentChoice === result) {
         toast.success(`You won! Result: ${result}`, { duration: 10000 });
       } else {
@@ -127,20 +131,19 @@ export default function HeadTailGame() {
       );
     });
 
-    socket.on("wonMessage", ({ message, amount }) => {
-      // setStatus(`You won: ₹${amount}`);
-      console.log("🎉 Win Message Received:", message, amount);
-      // setUserdata((prev: any) => ({
-      //   ...prev,
-      //   balance: prev.balance + amount,
-      // }));
-      // dispatch(
-      //   setUser({
-      //     ...userData,
-      //     balance: userData.balance,
-      //   })
-      // );
+    socket.on("userRegistered", (roomName) => {
+      console.log("User registered in room", roomName);
     });
+
+    if (!choice) {
+      console.log("Choice is null, waiting for user to select.");
+      socket.on("roundResultToAll", ({ room, roundId, result }) => {
+        console.log(`Room: ${room} → Round Result:`, roundId, result);
+        setResultHistory((prev) =>
+          [...prev, { room, roundId, result }].slice(-5)
+        );
+      });
+    }
 
     socket.on("error", (message) => {
       setStatus(`Error: ${message}`);
@@ -193,39 +196,36 @@ export default function HeadTailGame() {
   //   setBetAmount(10); // Reset bet amount after placing the bet
   // };
 
-
-
   const placeBet = () => {
     const amount = Number(betAmount);
-  
     if (!choice) return setStatus("Select Head or Tail first");
     if (isNaN(amount) || amount <= 0)
       return setStatus("Enter valid bet amount");
     if (userData.balance < amount) return setStatus("Insufficient balance");
-  
+
     if (isUserBeted) {
       toast.error("You already placed a bet in this round", {
         duration: 5000,
       });
       return;
     }
-  
+
     setUserdata((prev: any) => ({
       ...prev,
       balance: prev.balance - amount,
     }));
-  
+
     socket.emit("placeBet", {
       userId: userData._id,
       choice,
       amount,
       roundId,
     });
-  
+
     setIsUserBeted(true); // ✅ Set this AFTER placing the bet
     setBetAmount(10); // Reset bet amount after placing the bet
   };
-  
+
   const getUserBalance = async () => {
     try {
       if (!user?.token) return toast.error("Token not found");
@@ -250,7 +250,7 @@ export default function HeadTailGame() {
   useEffect(() => {
     console.log("we are going to register user", user?._id);
     if (user?._id) {
-      socket.emit("registerUser", user?._id); // userId should be available after login
+      socket.emit("registerUser", "headTailGame"); // userId should be available after login
     }
   }, []);
 

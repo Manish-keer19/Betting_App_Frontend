@@ -3,7 +3,7 @@ import axios from "axios";
 // export const BASE_URL = "http://localhost:3000";
 export const BASE_URL = "https://betting-app-backend-15gg.onrender.com";
 
-export const WebSocket_URL = "https://betting-app-backend-15gg.onrender.com"
+export const WebSocket_URL = "https://betting-app-backend-15gg.onrender.com";
 // export const WebSocket_URL = "http://localhost:3000";
 // Create an Axios instance
 const axiosInstance = axios.create({
