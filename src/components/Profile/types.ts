@@ -19,4 +19,5 @@ export type UserData = {
   referredBy?: string;
   referralCode?: string; //
   createdAt?: string;
+  DateOfBirth?: string;
 };

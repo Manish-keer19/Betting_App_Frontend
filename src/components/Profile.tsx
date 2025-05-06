@@ -454,7 +454,6 @@ type ActiveTab =
   | "referral"
   | "change-password";
 
-
 export const Profile = () => {
   const dispatch = useDispatch();
   const [theme] = useState<ThemeType>("green");
@@ -520,7 +519,10 @@ export const Profile = () => {
         email: user.email,
       };
 
-      const response = await userService.changePassword(data,userData.token || "");
+      const response = await userService.changePassword(
+        data,
+        userData.token || ""
+      );
 
       if (response?.success) {
         toast.success("Password changed successfully!");
@@ -536,8 +538,6 @@ export const Profile = () => {
     }
   };
 
-
-  
   const isGreenTheme = theme === "green";
   const bgColor = isGreenTheme
     ? "from-green-800 to-green-900"
@@ -592,19 +592,19 @@ export const Profile = () => {
             <div className="p-6 md:p-8">
               <div className="flex flex-col md:flex-row gap-8 items-start">
                 <div className="w-full md:w-auto flex flex-col items-center">
-                  <div className="relative group">
+                  <div className="relative group flex ">
                     <img
                       src={
                         user.profilePic || "https://avatar.vercel.sh/username"
                       }
                       alt="Profile"
-                      className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-lg border-4 border-white dark:border-gray-800 transition-transform duration-300 group-hover:scale-105"
+                      className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white dark:border-gray-800 transition-transform duration-300 group-hover:scale-105 "
                     />
-                    <div className="absolute inset-0 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
+                    {/* <div className="absolute inset-0 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-50">
                       <span className="text-white text-sm font-medium">
                         Edit
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="mt-4 text-center">
                     <h2 className="text-2xl font-bold">{user.username}</h2>
@@ -658,6 +658,16 @@ export const Profile = () => {
                         {
                           label: "Member Since",
                           value: memberSince,
+                          icon: "calendar",
+                        },
+                        {
+                          label: "Date of Birth",
+                          value: user.DateOfBirth
+                            ? new Date(user.DateOfBirth).toLocaleDateString(
+                                "en-GB"
+                              ) // DD/MM/YYYY
+                            : "N/A",
+
                           icon: "calendar",
                         },
                       ].map((item) => (
@@ -881,11 +891,11 @@ export const Profile = () => {
                 isLoading={isLoading}
               /> */}
 
-              <ChangePasswordForm 
+              <ChangePasswordForm
                 theme={theme}
-              onPasswordChange={handlePasswordChange}
-              isLoading={isLoading}
-                />
+                onPasswordChange={handlePasswordChange}
+                isLoading={isLoading}
+              />
             </div>
           )}
 

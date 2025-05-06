@@ -17,6 +17,7 @@ const Signup: React.FC = () => {
   const [otpSent, setOtpSent] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [referralCode, setReferralCode] = useState<string>("");
+  const [dob, setDob] = useState<string>("");
 
   // State for feedback (error or success)
   const [errorMessage, setErrorMessage] = useState<string>("");
@@ -63,6 +64,7 @@ const Signup: React.FC = () => {
         password,
         otp,
         referralCode: referralCode && referralCode,
+        dateOfBirth: dob,
       }; // Send details with OTP for signup
       const res = await authService.signup(data);
       if (res.success) {
@@ -124,6 +126,27 @@ const Signup: React.FC = () => {
                 className={`w-full px-4 py-3 rounded-lg ${inputBg} focus:outline-none focus:ring-2 ${inputFocus}`}
               />
 
+              {/* <input
+                type="date"
+                placeholder="Date of Birth"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+                className={`w-full px-4 py-3 rounded-lg ${inputBg} focus:outline-none focus:ring-2 ${inputFocus}`}
+              /> */}
+              <input
+                type="date"
+                placeholder="Date of Birth"
+                value={dob}
+                onChange={(e) => setDob(e.target.value)}
+                className={`w-full px-4 py-3 rounded-lg appearance-none ${inputBg} focus:outline-none focus:ring-2 ${inputFocus} cursor-pointer`}
+                style={{
+                  WebkitAppearance: "none",
+                  MozAppearance: "none",
+                  appearance: "none",
+                  colorScheme: theme === "green" ? "light" : "dark",
+                }}
+              />
+
               <button
                 type="button"
                 onClick={handleGenerateOtp}
@@ -134,10 +157,10 @@ const Signup: React.FC = () => {
               </button>
 
               <div className="text-center text-white mt-4 mb-4">
-            Already have an account?{" "}
-        <Link to="/login" className="text-green-500 hover:underline">
-        Login
-        </Link>
+                Already have an account?{" "}
+                <Link to="/login" className="text-green-500 hover:underline">
+                  Login
+                </Link>
               </div>
             </>
           )}
@@ -156,6 +179,7 @@ const Signup: React.FC = () => {
                 onChange={(e) => setOtp(e.target.value)}
                 className={`w-full px-4 py-3 rounded-lg ${inputBg} focus:outline-none focus:ring-2 ${inputFocus}`}
               />
+
               <button
                 type="button"
                 onClick={handleSignup}

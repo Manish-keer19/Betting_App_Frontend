@@ -147,6 +147,17 @@ export default function HeadTailGame() {
       setStatus(`Error: ${message}`);
     });
 
+    // socket.on("wonMessage", ({ message, amount }: any) => {
+    //   console.log("wonMessage", message, amount);
+
+    //   // toast.success(message, { duration: 10000 });
+    //   // toast.success(`You won ₹${amount}`, { duration: 10000 });
+    //   setUserdata((prev: any) => ({
+    //     ...prev,
+    //     balance: prev.balance + amount,
+    //   }));
+    // });
+
     return () => {
       socket.disconnect();
     };
