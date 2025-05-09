@@ -275,6 +275,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { userService } from "../../Services/userService";
 import { useSelector } from "react-redux";
+import { UserData } from "./types";
 
 type BankDetails = {
   accountNumber: string;
@@ -307,7 +308,7 @@ export const WithdrawForm = ({
   isGreenTheme,
 }: WithdrawFormProps) => {
   const user = useSelector((state: any) => state.user);
-  const [amount, setAmount] = useState<number>(100);
+  const [amount, setAmount] = useState<number>(110);
   const [withdrawalMethod, setWithdrawalMethod] = useState<"bank" | "upi">(
     "bank"
   );
@@ -325,8 +326,39 @@ export const WithdrawForm = ({
   >([]);
   const [activeTab, setActiveTab] = useState<"form" | "history">("form");
 
+  const [userData, setuserData] = useState<UserData>(user);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (amount < 110) {
+      toast.error("Minimum withdrawal amount is ₹100");
+      return;
+    }
+
+    if (userData.bonusAmount !== 0) {
+      toast.error(
+        `You need to play ₹${userData.bonusAmount} bonus amount before withdrawal`
+      );
+      return;
+    }
+
+    if (withdrawalMethod === "bank") {
+      if (
+        !bankDetails.accountNumber ||
+        !bankDetails.ifscCode ||
+        !bankDetails.accountHolderName ||
+        !bankDetails.bankName
+      ) {
+        toast.error("Please first fill all bank details");
+        return;
+      }
+    } else {
+      if (!bankDetails.upiId) {
+        toast.error("Please enter your UPI ID");
+        return;
+      }
+    }
 
     if (!validateForm()) {
       return;
@@ -380,7 +412,7 @@ export const WithdrawForm = ({
         setIsBankDetailExist(true);
       } else {
         setIsBankDetailExist(false);
-        toast.error(res?.message || "Failed to fetch bank details");
+        // toast.error(res?.message || "Failed to fetch bank details");
       }
     } catch (error) {
       setIsBankDetailExist(false);
@@ -398,16 +430,17 @@ export const WithdrawForm = ({
       if (res?.success) {
         setWithdrawalHistory(res.data);
       } else {
-        toast.error(res?.message || "Failed to fetch withdraw history");
+        // toast.error(res?.message || "Failed to fetch withdraw history");
       }
     } catch (error) {
       console.error("Error fetching withdraw history:", error);
-      toast.error("Something went wrong while fetching withdraw history");
+      // toast.error("Something went wrong while fetching withdraw history");
     }
   };
 
   useEffect(() => {
     if (user?._id && user?.token) {
+      getUserBonus();
       getuserBankDetails();
       getUserWithdrawHistory();
     } else {
@@ -437,6 +470,30 @@ export const WithdrawForm = ({
       hour: "2-digit",
       minute: "2-digit",
     });
+  };
+
+  const getUserBonus = async () => {
+    try {
+      if (!user.token) {
+        toast.error("token not found");
+        return;
+      }
+      const res = await userService.getUserBonus(user._id, user.token);
+      if (res?.success) {
+        setuserData(
+          (prev): UserData => ({
+            ...prev,
+            bonusAmount: res.data.bonusAmount,
+            bonusPlayedAmount: res.data.bonusPlayedAmount,
+          })
+        );
+      } else {
+        toast.error(res?.message || "Failed to fetch user data");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      // toast.error("Something went wrong while fetching user data");
+    }
   };
 
   const handleSaveBankDetails = async () => {
@@ -502,12 +559,22 @@ export const WithdrawForm = ({
             <input
               type="tel" // Changed to number type for better mobile experience
               value={amount}
-              onChange={(e)=>setAmount(e.target.value ? Number(e.target.value) : 0)}
+              onChange={(e) =>
+                setAmount(e.target.value ? Number(e.target.value) : 0)
+              }
               className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <p className="text-xs text-gray-400">
               Available: ₹{currentBalance.toLocaleString()}
             </p>
+
+            {userData.bonusAmount !== 0 && (
+              <p className="text-xs text-gray-400">
+                You need to play{" "}
+                <span className="font-bold ">₹{userData.bonusAmount}</span>{" "}
+                bonus amount before withdrawal
+              </p>
+            )}
           </div>
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-300">
@@ -527,7 +594,7 @@ export const WithdrawForm = ({
               >
                 Bank Transfer
               </button>
-              <button
+              {/* <button
                 type="button"
                 onClick={() => setWithdrawalMethod("upi")}
                 className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
@@ -539,7 +606,7 @@ export const WithdrawForm = ({
                 }`}
               >
                 UPI
-              </button>
+              </button> */}
             </div>
           </div>
 

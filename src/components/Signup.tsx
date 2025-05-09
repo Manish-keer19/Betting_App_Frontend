@@ -37,6 +37,10 @@ const Signup: React.FC = () => {
 
   // Function to generate OTP
   const handleGenerateOtp = async () => {
+    if (!email || !name || !password || !dob) {
+      setErrorMessage("Please fill all the fields");
+      return;
+    }
     setIsLoading(true);
     try {
       const data = { email }; // Send only email to generate OTP
@@ -126,19 +130,28 @@ const Signup: React.FC = () => {
                 className={`w-full px-4 py-3 rounded-lg ${inputBg} focus:outline-none focus:ring-2 ${inputFocus}`}
               />
 
+              <label className="text-sm text-gray-500 mb-2 block">
+                Date of Birth
+              </label>
               {/* <input
                 type="date"
                 placeholder="Date of Birth"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
-                className={`w-full px-4 py-3 rounded-lg ${inputBg} focus:outline-none focus:ring-2 ${inputFocus}`}
+                className={`w-full px-4 py-3 rounded-lg appearance-none ${inputBg} focus:outline-none focus:ring-2 ${inputFocus} cursor-pointer`}
+                style={{
+                  WebkitAppearance: "none",
+                  MozAppearance: "none",
+                  appearance: "none",
+                  colorScheme: theme === "green" ? "light" : "dark",
+                }}
               /> */}
+
               <input
                 type="date"
-                placeholder="Date of Birth"
                 value={dob}
                 onChange={(e) => setDob(e.target.value)}
-                className={`w-full px-4 py-3 rounded-lg appearance-none ${inputBg} focus:outline-none focus:ring-2 ${inputFocus} cursor-pointer`}
+                className={`w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm text-sm ${inputBg} focus:outline-none focus:ring-2 ${inputFocus} cursor-pointer`}
                 style={{
                   WebkitAppearance: "none",
                   MozAppearance: "none",
@@ -153,7 +166,7 @@ const Signup: React.FC = () => {
                 disabled={isLoading}
                 className={`w-full py-3 mt-2 rounded-lg ${button} text-white font-semibold tracking-wide transition duration-300`}
               >
-                {isLoading ? "Sending OTP..." : "Send OTP"}
+                {isLoading ? "Signing Up....." : "Signup"}
               </button>
 
               <div className="text-center text-white mt-4 mb-4">
@@ -186,7 +199,7 @@ const Signup: React.FC = () => {
                 disabled={isLoading}
                 className={`w-full py-3 mt-2 rounded-lg ${button} text-white font-semibold tracking-wide transition duration-300`}
               >
-                {isLoading ? "Signing Up..." : "Sign Up"}
+                {isLoading ? "Verifying otp..." : "Verify OTP"}
               </button>
             </>
           )}

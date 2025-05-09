@@ -20,4 +20,6 @@ export type UserData = {
   referralCode?: string; //
   createdAt?: string;
   DateOfBirth?: string;
+  bonusAmount?: number;
+  bonusPlayedAmount?: number;
 };

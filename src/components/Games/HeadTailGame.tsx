@@ -150,13 +150,36 @@ export default function HeadTailGame() {
     // socket.on("wonMessage", ({ message, amount }: any) => {
     //   console.log("wonMessage", message, amount);
 
-    //   // toast.success(message, { duration: 10000 });
-    //   // toast.success(`You won ₹${amount}`, { duration: 10000 });
     //   setUserdata((prev: any) => ({
     //     ...prev,
     //     balance: prev.balance + amount,
     //   }));
+    //   dispatch(
+    //     setUser({
+    //       ...userData,
+    //       balance: userData.balance,
+    //     })
+    //   );
     // });
+
+
+    socket.on("wonMessage", ({ message, amount }: any) => {
+  console.log("wonMessage", message, amount);
+
+  setUserdata((prev: any) => {
+    const newBalance = prev.balance + amount;
+
+    const updatedUser = {
+      ...prev,
+      balance: newBalance,
+    };
+
+    // Update Redux store too
+    dispatch(setUser(updatedUser));
+
+    return updatedUser;
+  });
+});
 
     return () => {
       socket.disconnect();

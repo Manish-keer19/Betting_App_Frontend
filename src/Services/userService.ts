@@ -1,4 +1,4 @@
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import axiosInstance from "./axiosInstance";
 
 class UserService {
@@ -97,11 +97,11 @@ class UserService {
       if (res.data.success) {
         return res.data;
       } else {
-        toast.error(res.data.message || "Failed to fetch withdraw history");
+        // toast.error(res.data.message || "Failed to fetch withdraw history");
       }
     } catch (error) {
       console.error("Error fetching withdraw history:", error);
-      toast.error("Something went wrong while fetching withdraw history");
+      // toast.error("Something went wrong while fetching withdraw history");
     }
   }
 
@@ -162,6 +162,26 @@ class UserService {
     }
   }
 
+
+  async getUserBonus (userId: string, token: string) {
+    try {
+      const res = await axiosInstance.get(
+        `/user/get-user-bonus/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("User bonus response:", res.data);
+      if (res.data.success) {
+        return res.data;
+      }
+    } catch (error) {
+      console.error("Error fetching user bonus:", error);
+      throw error;
+    }
+  }
  
 }
 

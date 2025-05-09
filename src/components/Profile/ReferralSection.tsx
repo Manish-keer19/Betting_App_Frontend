@@ -241,48 +241,46 @@ export const ReferralSection = ({
     setShowShareOptions(!showShareOptions);
   };
 
-//   const shareVia = (method: string) => {
-//     let url = "";
-//     const message = `🚀 Join my referral program! Use my code ${referralData.referralCode} to get a bonus! 💰 
+  //   const shareVia = (method: string) => {
+  //     let url = "";
+  //     const message = `🚀 Join my referral program! Use my code ${referralData.referralCode} to get a bonus! 💰
 
-// 🔗 ${referralLink}
+  // 🔗 ${referralLink}
 
-// 🤝 Let's both get rewards! Here's the details: 
-// 1️⃣ Share your referral code 
-// 2️⃣ They sign up using your code 
-// 3️⃣ You get ₹50, they get ₹30! 🎉
+  // 🤝 Let's both get rewards! Here's the details:
+  // 1️⃣ Share your referral code
+  // 2️⃣ They sign up using your code
+  // 3️⃣ You get ₹50, they get ₹30! 🎉
 
-// 🏆 Don't miss out on the bonus!`;
+  // 🏆 Don't miss out on the bonus!`;
 
-//     switch (method) {
-//       case "whatsapp":
-//         url = `https://wa.me/?text=${encodeURIComponent(
-//           message
-//         )}&image=${encodeURIComponent(referralImageUrl)}`;
-//         break;
-//       case "telegram":
-//         url = `https://t.me/share/url?url=${encodeURIComponent(
-//           referralLink
-//         )}&text=${encodeURIComponent(message)}&photo=${encodeURIComponent(
-//           referralImageUrl
-//         )}`;
-//         break;
-//       case "email":
-//         url = `mailto:?subject=Join me on this amazing referral program!&body=${encodeURIComponent(
-//           message
-//         )}%0A${encodeURIComponent(referralImageUrl)}`;
-//         break;
-//       default:
-//         break;
-//     }
+  //     switch (method) {
+  //       case "whatsapp":
+  //         url = `https://wa.me/?text=${encodeURIComponent(
+  //           message
+  //         )}&image=${encodeURIComponent(referralImageUrl)}`;
+  //         break;
+  //       case "telegram":
+  //         url = `https://t.me/share/url?url=${encodeURIComponent(
+  //           referralLink
+  //         )}&text=${encodeURIComponent(message)}&photo=${encodeURIComponent(
+  //           referralImageUrl
+  //         )}`;
+  //         break;
+  //       case "email":
+  //         url = `mailto:?subject=Join me on this amazing referral program!&body=${encodeURIComponent(
+  //           message
+  //         )}%0A${encodeURIComponent(referralImageUrl)}`;
+  //         break;
+  //       default:
+  //         break;
+  //     }
 
-//     window.open(url, "_blank");
-//     setShowShareOptions(false);
-//   };
+  //     window.open(url, "_blank");
+  //     setShowShareOptions(false);
+  //   };
 
-
-
-const shareVia = (method: string) => {
+  const shareVia = (method: string) => {
     let url = "";
     const message = `🚀 Join my referral program! Use my code ${referralData.referralCode} to get a bonus! 💰 
   
@@ -291,28 +289,34 @@ const shareVia = (method: string) => {
   🤝 Let's both get rewards! Here's the details: 
   1️⃣ Share your referral code 
   2️⃣ They sign up using your code 
-  3️⃣ You get ₹50, they get ₹30! 🎉
+  3️⃣ You get ₹300, they get ₹50! 🎉
   
   🏆 Don't miss out on the bonus!`;
-  
+
     switch (method) {
       case "whatsapp":
         url = `https://wa.me/?text=${encodeURIComponent(message)}`;
         break;
       case "telegram":
-        url = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(message)}&photo=${encodeURIComponent(referralImageUrl)}`;
+        url = `https://t.me/share/url?url=${encodeURIComponent(
+          referralLink
+        )}&text=${encodeURIComponent(message)}&photo=${encodeURIComponent(
+          referralImageUrl
+        )}`;
         break;
       case "email":
-        url = `mailto:?subject=Join me on this amazing referral program!&body=${encodeURIComponent(message)}%0A${encodeURIComponent(referralImageUrl)}`;
+        url = `mailto:?subject=Join me on this amazing referral program!&body=${encodeURIComponent(
+          message
+        )}%0A${encodeURIComponent(referralImageUrl)}`;
         break;
       default:
         break;
     }
-  
+
     window.open(url, "_blank");
     setShowShareOptions(false);
   };
-  
+
   return (
     <div
       className={`p-6 rounded-lg bg-white bg-opacity-10 backdrop-blur-sm border border-green-600 mt-6`}
@@ -406,8 +410,8 @@ const shareVia = (method: string) => {
               <span className=" bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">
                 3
               </span>
-              You get <span className="font-bold">₹50</span> and they get{" "}
-              <span className="font-bold">₹30</span> bonus!
+              You get <span className="font-bold">₹300 </span> and they get{" "}
+              <span className="font-bold">₹50</span> bonus!
             </li>
           </ul>
 
