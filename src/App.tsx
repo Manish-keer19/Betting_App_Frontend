@@ -12,7 +12,8 @@ import HeadTailGame from "./components/Games/HeadTailGame";
 import NotFound from "./components/NotFound";
 import { Allgames } from "./components/Games/Allgames";
 import ResetPassword from "./components/Profile/ResetPassword";
-
+// import BettingUI from "./components/Games/BettingUI";
+import WheelGame from "./components/Games/WheelGame";
 
 function App() {
   const route = createBrowserRouter([
@@ -47,7 +48,11 @@ function App() {
     },
     {
       path: "/reset-password",
-      element: <ResetPassword/>,
+      element: <ResetPassword />,
+    },
+    {
+      path: "/wheel-game",
+      element: <WheelGame />,
     },
 
     {
