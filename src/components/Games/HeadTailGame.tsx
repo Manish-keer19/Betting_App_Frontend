@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import io from "socket.io-client";
 import { TfiReload } from "react-icons/tfi";
@@ -23,7 +23,7 @@ export default function HeadTailGame() {
   const [roundId, setRoundId] = useState("");
   const [choice, setChoice] = useState<"head" | "tail" | null>(null);
   const [betAmount, setBetAmount] = useState<number>(10);
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(30);
   const [status, setStatus] = useState("");
   const [resultHistory, setResultHistory] = useState<
     Array<{ roundId: string; result: string }>
@@ -43,11 +43,11 @@ export default function HeadTailGame() {
     input: "bg-gray-800 text-white placeholder-gray-500",
   };
 
-  const choiceRef = useRef(choice);
+  // const choiceRef = useRef(choice);
 
-  useEffect(() => {
-    choiceRef.current = choice; // Update the ref whenever the choice changes
-  }, [choice]);
+  // useEffect(() => {
+  //   choiceRef.current = choice; // Update the ref whenever the choice changes
+  // }, [choice]);
 
   useEffect(() => {
     socket.on("currentRound", ({ roundId, startedAt }) => {
@@ -85,28 +85,64 @@ export default function HeadTailGame() {
     //   setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
     // });
 
-    socket.on("roundResult", ({ roundId, result }) => {
-      // console.log("choiceRef", choiceRef.current, "result", result);
+    socket.on(
+      "roundOutcome",
+      ({ result, choice, winningSide, amount, message }) => {
+        console.log("Round outcome:", { result, choice, winningSide, amount });
 
-      setIsUserBeted(false); // Reset user bet status for the next round
-      setStatus(`Round ${roundId} Winner: ${result}`);
-      const currentChoice = choiceRef.current; // Access the latest choice from the ref
-      console.log("choice", currentChoice, "result", result);
+        setStatus(message); // show status message
 
-      if (currentChoice === null) {
-        toast.error("You didn't place a bet this round", { duration: 10000 });
-        return;
+        // Optional toast notification
+        if (result === "win") {
+          toast.success(message);
+        } else {
+          toast.error(message);
+        }
+
+        // Reset UI if needed
+        // setLockedChoice(null); // or keep it locked for 2 seconds before reset
+        setIsUserBeted(false); // allow user to bet in the next round
+        // Optional: Fetch new balance from backend OR update balance here
+        if (result === "win") {
+          setUserdata((prev: any) => {
+            const newBalance = prev.balance + amount;
+
+            const updatedUser = {
+              ...prev,
+              balance: newBalance,
+            };
+
+            // Update Redux store too
+            dispatch(setUser(updatedUser));
+
+            return updatedUser;
+          });
+        }
       }
-      if (currentChoice === result) {
-        toast.success(`You won! Result: ${result}`, { duration: 10000 });
-      } else {
-        toast.error(`You lost! Result: ${result}`, { duration: 10000 });
-      }
+    );
 
-      setChoice(null);
-      setBetAmount(10);
-      // setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
-    });
+    // socket.on("roundResult", ({ roundId, result }) => {
+    //   // console.log("choiceRef", choiceRef.current, "result", result);
+
+    //   setIsUserBeted(false); // Reset user bet status for the next round
+    //   setStatus(`Round ${roundId} Winner: ${result}`);
+    //   const currentChoice = choiceRef.current; // Access the latest choice from the ref
+    //   console.log("choice", currentChoice, "result", result);
+
+    //   if (currentChoice === null) {
+    //     toast.error("You didn't place a bet this round", { duration: 10000 });
+    //     return;
+    //   }
+    //   if (currentChoice === result) {
+    //     toast.success(`You won! Result: ${result}`, { duration: 10000 });
+    //   } else {
+    //     toast.error(`You lost! Result: ${result}`, { duration: 10000 });
+    //   }
+
+    //   setChoice(null);
+    //   setBetAmount(10);
+    //   // setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
+    // });
 
     socket.on("newRound", ({ roundId, startedAt }) => {
       setRoundId(roundId);
@@ -162,24 +198,23 @@ export default function HeadTailGame() {
     //   );
     // });
 
+    // socket.on("wonMessage", ({ message, amount }: any) => {
+    //   console.log("wonMessage", message, amount);
 
-    socket.on("wonMessage", ({ message, amount }: any) => {
-  console.log("wonMessage", message, amount);
+    //   setUserdata((prev: any) => {
+    //     const newBalance = prev.balance + amount;
 
-  setUserdata((prev: any) => {
-    const newBalance = prev.balance + amount;
+    //     const updatedUser = {
+    //       ...prev,
+    //       balance: newBalance,
+    //     };
 
-    const updatedUser = {
-      ...prev,
-      balance: newBalance,
-    };
+    //     // Update Redux store too
+    //     dispatch(setUser(updatedUser));
 
-    // Update Redux store too
-    dispatch(setUser(updatedUser));
-
-    return updatedUser;
-  });
-});
+    //     return updatedUser;
+    //   });
+    // });
 
     return () => {
       socket.disconnect();
@@ -187,7 +222,7 @@ export default function HeadTailGame() {
   }, []);
 
   const startTimer = (startedAt: string) => {
-    const end = new Date(startedAt).getTime() + 60000;
+    const end = new Date(startedAt).getTime() + 30000;
     const interval = setInterval(() => {
       const now = Date.now();
       const left = Math.max(0, Math.floor((end - now) / 1000));
