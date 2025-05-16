@@ -1,6 +1,5 @@
 import { useTheme } from "../../utils/ThemeContext"; // Adjust the import path as needed
 import { Link } from "react-router-dom";
-import Navbar from "../Navbar";
 
 function Allgames() {
   const { theme } = useTheme();

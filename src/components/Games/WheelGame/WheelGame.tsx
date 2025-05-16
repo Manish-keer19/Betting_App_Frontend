@@ -1222,7 +1222,8 @@ const WheelGame: React.FC = () => {
   const [betHistory, setBetHistory] = useState<Bet[]>([]);
   const [isSpinning, setIsSpinning] = useState<boolean>(false);
   const [currentResult, setCurrentResult] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading] = useState<boolean>(false);
   // const [user, setuser] = useState(userData)
 
   const socketRef = useRef<Socket | null>(null);
