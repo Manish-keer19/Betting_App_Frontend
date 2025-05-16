@@ -1,118 +1,108 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { GiCardRandom, GiCoins } from 'react-icons/gi';
-import { FaChess, FaDice } from 'react-icons/fa';
-import { IoIosArrowForward } from 'react-icons/io';
-import HeadTailGame from './HeadTailGame';
-import { IoPrism } from "react-icons/io5";
+import { useTheme } from "../../utils/ThemeContext"; // Adjust the import path as needed
+import { Link } from "react-router-dom";
+import Navbar from "../Navbar";
 
- export const Allgames = () => {
-  const [activeGame, setActiveGame] = useState<string | null>(null);
+function Allgames() {
+  const { theme } = useTheme();
 
-  const games = [
-    {
-      id: 'head-tail',
-      name: 'Head & Tail',
-      icon: <GiCoins className="text-yellow-500 text-3xl" />,
-      description: 'Classic coin flip game with instant results',
-      color: 'bg-gradient-to-r from-yellow-500 to-amber-600'
-    },
-    {
-      id: 'dice-roll',
-      name: 'Dice Roll',
-      icon: <FaDice className="text-blue-500 text-3xl" />,
-      description: 'Roll virtual dice for exciting outcomes',
-      color: 'bg-gradient-to-r from-blue-500 to-indigo-600'
-    },
-    {
-      id: 'slot-machine',
-      name: 'Slot Machine',
-      icon: <IoPrism className="text-red-500 text-3xl" />,
-      description: 'Spin to win with our virtual slots',
-      color: 'bg-gradient-to-r from-red-500 to-pink-600'
-    },
-    {
-      id: 'card-game',
-      name: 'Card Game',
-      icon: <GiCardRandom className="text-green-500 text-3xl" />,
-      description: 'Try your luck with random card draws',
-      color: 'bg-gradient-to-r from-green-500 to-emerald-600'
-    },
-    {
-      id: 'mini-chess',
-      name: 'Mini Chess',
-      icon: <FaChess className="text-purple-500 text-3xl" />,
-      description: 'Quick chess challenges',
-      color: 'bg-gradient-to-r from-purple-500 to-violet-600'
-    }
-  ];
+  // Style classes based on theme
+  const cardClass =
+    theme === "black"
+      ? "bg-green-100 border-green-300 text-green-900"
+      : "bg-gray-800 border-gray-700 text-white";
 
-  const renderGame = (gameId: string) => {
-    switch (gameId) {
-      case 'head-tail':
-        return <HeadTailGame />;
-      case 'dice-roll':
-        return <HeadTailGame />;
-      case 'slot-machine':
-        return <HeadTailGame />;
-      case 'card-game':
-        return <HeadTailGame />;
-      case 'mini-chess':
-        return <HeadTailGame />;
-      default:
-        return <GameSelection setActiveGame={setActiveGame} games={games} />;
-    }
-  };
+  const buttonClass =
+    theme === "black"
+      ? "bg-green-600 hover:bg-green-700 text-white"
+      : "bg-blue-600 hover:bg-blue-700 text-white";
+
+  const titleClass = theme === "black" ? "text-green-800" : "text-white";
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4">
-      <div className="max-w-6xl mx-auto">
-        {activeGame ? (
-          <div>
-            <button 
-              onClick={() => setActiveGame(null)}
-              className="flex items-center mb-6 text-gray-300 hover:text-white transition-colors"
+    <div className="container mx-auto px-4 py-8 mt-14">
+      <h1 className={`text-4xl font-bold mb-8 text-center ${titleClass}`}>
+        Our Games Collection
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Head-Tail Game Card */}
+        <div
+          className={`rounded-lg shadow-xl overflow-hidden border-2 ${cardClass} transition-transform hover:scale-95`}
+        >
+          <div className="p-6">
+            <h2
+              className={`text-2xl font-semibold mb-4 ${
+                theme === "black" ? "text-green-900" : "text-white"
+              }`}
             >
-              <IoIosArrowForward className="transform rotate-180 mr-1" />
-              Back to all games
-            </button>
-            {renderGame(activeGame)}
+              Head or Tail
+            </h2>
+            <p
+              className={`mb-6 ${
+                theme === "black" ? "text-green-800" : "text-gray-300"
+              }`}
+            >
+              Test your luck with this classic coin flip game. Choose heads or
+              tails and see if you win!
+            </p>
+            <div className="flex justify-center">
+              <Link
+                to="/head-tail"
+                className={`px-6 py-3 rounded-full font-bold ${buttonClass} transition-colors duration-300`}
+              >
+                Play Now
+              </Link>
+            </div>
           </div>
-        ) : (
-          <GameSelection setActiveGame={setActiveGame} games={games} />
-        )}
+        </div>
+
+        {/* Wheel Game Card */}
+        <div
+          className={`rounded-lg shadow-xl overflow-hidden border-2 ${cardClass} transition-transform hover:scale-95`}
+        >
+          <div className="p-6">
+            <h2
+              className={`text-2xl font-semibold mb-4 ${
+                theme === "black" ? "text-green-900" : "text-white"
+              }`}
+            >
+              Wheel of Fortune
+            </h2>
+            <p
+              className={`mb-6 ${
+                theme === "black" ? "text-green-800" : "text-gray-300"
+              }`}
+            >
+              Spin the wheel and win amazing prizes! A game of chance that's
+              exciting every time.
+            </p>
+            <div className="flex justify-center">
+              <Link
+                to="/wheel-game"
+                className={`px-6 py-3 rounded-full font-bold ${buttonClass} transition-colors duration-300`}
+              >
+                Play Now
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Additional decorative elements */}
+      <div
+        className={`mt-16 text-center ${
+          theme === "black" ? "text-green-800" : "text-gray-400"
+        }`}
+      >
+        <p className="text-lg">More exciting games coming soon!</p>
+        <div className="flex justify-center space-x-4 mt-4">
+          <div className="w-8 h-8 rounded-full bg-current opacity-60"></div>
+          <div className="w-8 h-8 rounded-full bg-current opacity-40"></div>
+          <div className="w-8 h-8 rounded-full bg-current opacity-20"></div>
+        </div>
       </div>
     </div>
   );
-};
+}
 
-const GameSelection = ({ setActiveGame, games }: { setActiveGame: (game: string) => void, games: any[] }) => (
-  <div>
-    <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-      Choose Your Game
-    </h1>
-    <p className="text-gray-400 mb-8">Select from our exciting collection of games</p>
-    
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {games.map((game) => (
-        <motion.div
-          key={game.id}
-          whileHover={{ y: -5 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => setActiveGame(game.id)}
-          className={`p-6 rounded-xl cursor-pointer transition-all ${game.color} bg-opacity-10 hover:bg-opacity-20 border border-gray-800 hover:border-gray-700`}
-        >
-          <div className="flex items-start space-x-4">
-            <div className={`p-3 rounded-lg ${game.color} bg-opacity-20`}>
-              {game.icon}
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold">{game.name}</h3>
-              <p className="text-gray-400 text-sm mt-1">{game.description}</p>
-            </div>
-          </div>
-        </motion.div>
-      ))}
-    </div>
-  </div>
-);
+export default Allgames;

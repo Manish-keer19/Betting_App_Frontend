@@ -10,10 +10,12 @@ import { Toaster } from "react-hot-toast";
 import AdminDashboard from "./Admin/AdminDashboard";
 import HeadTailGame from "./components/Games/HeadTailGame";
 import NotFound from "./components/NotFound";
-import { Allgames } from "./components/Games/Allgames";
+import Allgames from "./components/Games/Allgames";
 import ResetPassword from "./components/Profile/ResetPassword";
 // import BettingUI from "./components/Games/BettingUI";
-import WheelGame from "./components/Games/WheelGame";
+import WheelGame from "./components/Games/WheelGame/WheelGame";
+import Navbar from "./components/Navbar";
+  
 
 function App() {
   const route = createBrowserRouter([
@@ -44,7 +46,14 @@ function App() {
     },
     {
       path: "/games",
-      element: <Allgames />,
+      // element: <Allgames  />,
+ element: (
+    <>
+      <Navbar />
+      <Allgames />
+    </>
+  )
+
     },
     {
       path: "/reset-password",
@@ -52,7 +61,7 @@ function App() {
     },
     {
       path: "/wheel-game",
-      element: <WheelGame />,
+      element: <WheelGame  />,
     },
 
     {
