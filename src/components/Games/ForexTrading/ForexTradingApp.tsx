@@ -434,7 +434,7 @@ const ForexTradingApp = () => {
   const [activeTab, setActiveTab] = useState("game"); // 'game' or 'history'
 
   //  const [timeLeft, setTimeLeft] = useState(30);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const endTimeRef = useRef<number>(0);
 
 
@@ -544,9 +544,9 @@ const ForexTradingApp = () => {
       if (result === "win") {
         const newBet = {
           roundId: roundId,
-          choice: choice, // example: "up" or "down"
+          choice: choice as "up" | "down", // explicit cast
           amount: betAmount, // example: 100
-          result: "win",
+          result: "win" as "win",
           payout: betAmount * 1.95, // example: amount * 2 or custom logic
           createdAt: new Date().toISOString(),
         };
@@ -556,9 +556,9 @@ const ForexTradingApp = () => {
       } else {
         const newBet = {
           roundId: roundId,
-          choice: choice, // example: "up" or "down"
+          choice: choice as "up" | "down", // explicit cast
           amount: betAmount, // example: 100
-          result: "lose",
+          result: "lose" as "lose",
           payout: 0,
           createdAt: new Date().toISOString(),
         };
