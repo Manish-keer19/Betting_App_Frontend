@@ -1,112 +1,148 @@
-
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import io from "socket.io-client";
 import { TfiReload } from "react-icons/tfi";
-import { FaCoins, FaTimes } from "react-icons/fa";
-// import { GiTwoCoins, FaUserCircle, GiFoxTail } from "react-icons";
-
-import { GiTwoCoins, GiFoxTail } from "react-icons/gi";
-import { FaUserCircle } from "react-icons/fa";
-
-import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
+// import { useTheme } from "../../utils/ThemeContext";
 import { userService } from "../../Services/userService";
 import { setUser } from "../../features/userSlice";
 import Navbar from "../Navbar";
 import { WebSocket_URL } from "../../Services/axiosInstance";
 
+// const socket = io("http://localhost:3000");
+
 const socket = io(WebSocket_URL);
 
-type Notification = {
-  id: string;
-  type: "success" | "error";
-  message: string;
-  amount?: number;
-};
-
 export default function HeadTailGame() {
+  // const { theme } = useTheme();
+  // const isGreen = theme === "green";
+
   const dispatch = useDispatch();
   const userData = useSelector((state: any) => state.user);
 
   const [roundId, setRoundId] = useState("");
   const [choice, setChoice] = useState<"head" | "tail" | null>(null);
   const [betAmount, setBetAmount] = useState<number>(10);
-  const [timeLeft, setTimeLeft] = useState(60);
-  const [status, setStatus] = useState("Waiting for round to start...");
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [status, setStatus] = useState("");
   const [resultHistory, setResultHistory] = useState<
     Array<{ roundId: string; result: string }>
   >([]);
   const [user, setUserdata] = useState(userData);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isSpinning, setIsSpinning] = useState(false);
+
+  const [isUserBeted, setIsUserBeted] = useState<Boolean>(false);
 
   const colors = {
-    bg: "bg-gradient-to-br from-gray-900 to-gray-800",
-    card: "bg-gray-800 bg-opacity-80 backdrop-blur-sm",
+    bg: "bg-black",
+    card: "bg-gray-900",
     text: "text-white",
-    button: "bg-gray-700 hover:bg-gray-600",
+    button: "bg-gray-800 hover:bg-gray-700",
     border: "border-gray-700",
-    activeHead: "bg-gradient-to-br from-blue-500 to-blue-600 text-white",
-    activeTail: "bg-gradient-to-br from-amber-500 to-amber-600 text-white",
+    active: "bg-gradient-to-r from-yellow-500 to-yellow-600 text-black",
     highlight: "text-yellow-400",
-    input: "bg-gray-700 text-white placeholder-gray-400",
-    success: "bg-gradient-to-r from-green-500 to-green-600",
-    error: "bg-gradient-to-r from-red-500 to-red-600",
+    input: "bg-gray-800 text-white placeholder-gray-500",
   };
 
-  // Add notification
-  const addNotification = (
-    type: "success" | "error",
-    message: string,
-    amount?: number
-  ) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    setNotifications((prev) => [...prev, { id, type, message, amount }]);
+  // const choiceRef = useRef(choice);
 
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-      removeNotification(id);
-    }, 5000);
-  };
-
-  // Remove notification
-  const removeNotification = (id: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  };
+  // useEffect(() => {
+  //   choiceRef.current = choice; // Update the ref whenever the choice changes
+  // }, [choice]);
 
   useEffect(() => {
     socket.on("currentRound", ({ roundId, startedAt }) => {
+      setIsUserBeted(false); // Reset user bet status for the new round
       setRoundId(roundId);
       startTimer(startedAt);
-      setStatus("Place your bet!");
     });
 
     socket.on("joinedRound", ({ roundId }) => {
       setStatus(`Joined Round ${roundId}`);
     });
 
-    socket.on("roundResult", ({ roundId, result }) => {
-      console.log("Received roundResult:", roundId, result);
-      setIsSpinning(true);
-      setStatus(`Round ${roundId} Winner: ${result}`);
+    // socket.on("roundResult", ({ roundId, result,message }) => {
 
-      // Show win/lose notification
-      if (choice === result) {
-        addNotification("success", `You won!`, betAmount * 2);
-      } else if (choice !== null) {
-        addNotification("error", `You lost!`);
+    //      console.log("Received roundResult:", roundId, result, message);
+
+    //   setStatus(`Round ${roundId} Winner: ${result}`);
+    //   setChoice(null);
+    //   setBetAmount(10);
+    //   setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
+    //   console.log("Round Result:", message);
+    // });
+
+    // socket.on("roundResult", ({ roundId, result, message }) => {
+    //   console.log("Received round result:", roundId, result, message);
+    //   setStatus(`Round ${roundId} Winner: ${result}`);
+    //   console.log("choice", choice, "result", result);
+    //   if (choice === result) {
+    //     toast.success(`You won! Result: ${result}`, { duration: 10000 });
+    //   } else {
+    //     toast.error(`You lost! Result: ${result}`, { duration: 10000 });
+    //   }
+    //   setChoice(null);
+    //   setBetAmount(10);
+    //   setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
+    // });
+
+    socket.on(
+      "roundOutcome",
+      ({ result, choice, winningSide, amount, message }) => {
+        console.log("Round outcome:", { result, choice, winningSide, amount });
+
+        setStatus(message); // show status message
+
+        // Optional toast notification
+        if (result === "win") {
+          toast.success(message);
+        } else {
+          toast.error(message);
+        }
+
+        // Reset UI if needed
+        // setLockedChoice(null); // or keep it locked for 2 seconds before reset
+        setIsUserBeted(false); // allow user to bet in the next round
+        // Optional: Fetch new balance from backend OR update balance here
+        if (result === "win") {
+          setUserdata((prev: any) => {
+            const newBalance = prev.balance + amount;
+
+            const updatedUser = {
+              ...prev,
+              balance: newBalance,
+            };
+
+            // Update Redux store too
+            dispatch(setUser(updatedUser));
+
+            return updatedUser;
+          });
+        }
       }
+    );
 
-      // Reset after animation
-      setTimeout(() => {
-        setChoice(null);
-        setBetAmount(10);
-        setIsSpinning(false);
-      }, 2000);
+    // socket.on("roundResult", ({ roundId, result }) => {
+    //   // console.log("choiceRef", choiceRef.current, "result", result);
 
-      setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
-    });
+    //   setIsUserBeted(false); // Reset user bet status for the next round
+    //   setStatus(`Round ${roundId} Winner: ${result}`);
+    //   const currentChoice = choiceRef.current; // Access the latest choice from the ref
+    //   console.log("choice", currentChoice, "result", result);
+
+    //   if (currentChoice === null) {
+    //     toast.error("You didn't place a bet this round", { duration: 10000 });
+    //     return;
+    //   }
+    //   if (currentChoice === result) {
+    //     toast.success(`You won! Result: ${result}`, { duration: 10000 });
+    //   } else {
+    //     toast.error(`You lost! Result: ${result}`, { duration: 10000 });
+    //   }
+
+    //   setChoice(null);
+    //   setBetAmount(10);
+    //   // setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
+    // });
 
     socket.on("newRound", ({ roundId, startedAt }) => {
       setRoundId(roundId);
@@ -131,18 +167,62 @@ export default function HeadTailGame() {
       );
     });
 
+    socket.on("userRegistered", (roomName) => {
+      console.log("User registered in room", roomName);
+    });
+
+    socket.on("roundResultToAll", ({ room, roundId, result }) => {
+      console.log(`Room: ${room} → Round Result:`, roundId, result);
+
+      setResultHistory((prev) =>
+        [...prev, { room, roundId, result }].slice(-5)
+      );
+    });
+
     socket.on("error", (message) => {
-      addNotification("error", message);
       setStatus(`Error: ${message}`);
     });
+
+    // socket.on("wonMessage", ({ message, amount }: any) => {
+    //   console.log("wonMessage", message, amount);
+
+    //   setUserdata((prev: any) => ({
+    //     ...prev,
+    //     balance: prev.balance + amount,
+    //   }));
+    //   dispatch(
+    //     setUser({
+    //       ...userData,
+    //       balance: userData.balance,
+    //     })
+    //   );
+    // });
+
+    // socket.on("wonMessage", ({ message, amount }: any) => {
+    //   console.log("wonMessage", message, amount);
+
+    //   setUserdata((prev: any) => {
+    //     const newBalance = prev.balance + amount;
+
+    //     const updatedUser = {
+    //       ...prev,
+    //       balance: newBalance,
+    //     };
+
+    //     // Update Redux store too
+    //     dispatch(setUser(updatedUser));
+
+    //     return updatedUser;
+    //   });
+    // });
 
     return () => {
       socket.disconnect();
     };
-  }, [choice, betAmount]);
+  }, []);
 
   const startTimer = (startedAt: string) => {
-    const end = new Date(startedAt).getTime() + 60000;
+    const end = new Date(startedAt).getTime() + 30000;
     const interval = setInterval(() => {
       const now = Date.now();
       const left = Math.max(0, Math.floor((end - now) / 1000));
@@ -151,50 +231,71 @@ export default function HeadTailGame() {
     }, 1000);
   };
 
-  const handleChoice = (c: "head" | "tail") => {
-    setChoice(c);
-    // Play sound effect
-    const audio = new Audio("/sounds/click.mp3");
-    audio.volume = 0.3;
-    audio.play();
-  };
+  const handleChoice = (c: "head" | "tail") => setChoice(c);
 
-  const confirmBet = () => {
-    if (!choice) {
-      addNotification("error", "Select Head or Tail first");
-      return;
-    }
-    if (isNaN(betAmount) || betAmount <= 0) {
-      addNotification("error", "Enter valid bet amount");
-      return;
-    }
-    if (userData.balance < betAmount) {
-      addNotification("error", "Insufficient balance");
-      return;
-    }
-    setShowConfirmModal(true);
-  };
+  // const placeBet = () => {
+  //   const amount = Number(betAmount);
+  //   setIsUserBeted(true);
+  //   if (!choice) return setStatus("Select Head or Tail first");
+  //   if (isNaN(amount) || amount <= 0)
+  //     return setStatus("Enter valid bet amount");
+  //   if (userData.balance < amount) return setStatus("Insufficient balance");
+
+  //   setUserdata((prev: any) => ({
+  //     ...prev,
+  //     balance: prev.balance - amount,
+  //   }));
+
+  //   if (isUserBeted) {
+  //     toast.error("You already placed a bet in this round", {
+  //       duration: 5000,
+  //     });
+  //     return;
+  //   }
+
+  //   socket.emit("placeBet", {
+  //     userId: userData._id,
+  //     choice,
+  //     amount,
+  //     roundId,
+  //   });
+
+  //   setBetAmount(10); // Reset bet amount after placing the bet
+  // };
 
   const placeBet = () => {
+    const amount = Number(betAmount);
+    if (!choice) return setStatus("Select Head or Tail first");
+    if (isNaN(amount) || amount <= 0)
+      return setStatus("Enter valid bet amount");
+    if (userData.balance < amount) return setStatus("Insufficient balance");
+
+    if (isUserBeted) {
+      toast.error("You already placed a bet in this round", {
+        duration: 5000,
+      });
+      return;
+    }
+
     setUserdata((prev: any) => ({
       ...prev,
-      balance: prev.balance - betAmount,
+      balance: prev.balance - amount,
     }));
 
     socket.emit("placeBet", {
       userId: userData._id,
       choice,
-      amount: betAmount,
+      amount,
       roundId,
     });
 
-    setShowConfirmModal(false);
-    addNotification("success", `Bet placed: ₹${betAmount} on ${choice}`);
+    setIsUserBeted(true); // ✅ Set this AFTER placing the bet
+    setBetAmount(10); // Reset bet amount after placing the bet
   };
 
   const getUserBalance = async () => {
     try {
-      if (!user?.token) return;
+      if (!user?.token) return toast.error("Token not found");
 
       const res = await userService.getUserBalance(user.token);
       if (res?.success) {
@@ -206,18 +307,17 @@ export default function HeadTailGame() {
             token: user.token || "",
           })
         );
-        addNotification("success", "Balance refreshed");
-      } else
-        addNotification("error", res?.message || "Failed to fetch balance");
+      } else toast.error(res?.message || "Failed to fetch balance");
     } catch (error) {
       console.error("Balance error:", error);
-      addNotification("error", "Error fetching balance");
+      toast.error("Error fetching balance");
     }
   };
 
   useEffect(() => {
+    console.log("we are going to register user", user?._id);
     if (user?._id) {
-      socket.emit("registerUser", user?._id);
+      socket.emit("registerUser", "headTailGame"); // userId should be available after login
     }
   }, []);
 
@@ -225,117 +325,53 @@ export default function HeadTailGame() {
     <>
       <Navbar />
       <div className={`min-h-screen ${colors.bg} ${colors.text} p-4 pt-[7vh]`}>
-        {/* Notifications */}
-        <div className="fixed top-20 right-4 z-50 space-y-2 w-80">
-          <AnimatePresence>
-            {notifications.map((notification) => (
-              <motion.div
-                key={notification.id}
-                initial={{ x: 300, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 300, opacity: 0 }}
-                transition={{ type: "spring", damping: 25 }}
-                className={`p-4 rounded-lg shadow-lg flex justify-between items-center ${
-                  notification.type === "success"
-                    ? colors.success
-                    : colors.error
-                }`}
-              >
-                <div className="flex items-center">
-                  {notification.type === "success" ? (
-                    <GiTwoCoins className="mr-2 text-yellow-300" size={20} />
-                  ) : (
-                    <FaTimes className="mr-2" size={16} />
-                  )}
-                  <div>
-                    <p className="font-medium">{notification.message}</p>
-                    {notification.amount && (
-                      <p className="text-xs">
-                        +₹{notification.amount.toFixed(2)}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <button
-                  onClick={() => removeNotification(notification.id)}
-                  className="text-white hover:text-gray-200"
-                >
-                  <FaTimes />
-                </button>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-
-        {/* Main Game Container */}
         <div className="max-w-md mx-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <motion.h1
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent"
-            >
-              HEAD OR TAIL
-            </motion.h1>
-            <div className="flex items-center gap-2 bg-gray-800 px-3 py-2 rounded-full">
-              <FaCoins className="text-yellow-400" />
-              <span className="font-medium">
-                ₹
+            <h1 className="text-2xl font-bold text-yellow-400">HEAD OR TAIL</h1>
+            <div className="flex items-center gap-2">
+              <span className="text-sm">
+                {/* ₹{userData.balance.toFixed(2)} */}₹
                 {typeof userData.balance === "number"
                   ? userData.balance.toFixed(2)
                   : "0.00"}
               </span>
-              <button
+              <TfiReload
                 onClick={getUserBalance}
-                className="text-yellow-400 hover:text-yellow-300 transition-colors"
-              >
-                <TfiReload size={16} />
-              </button>
+                className="text-yellow-400 cursor-pointer"
+                size={18}
+              />
             </div>
           </div>
 
           {/* User Profile */}
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className={`flex items-center gap-3 p-3 rounded-xl ${colors.card} shadow-lg mb-6`}
+          <div
+            className={`flex items-center gap-3 p-3 rounded-lg ${colors.card} mb-4`}
           >
-            <div className="relative">
-              <img
-                src={userData.profilePic || "/default-avatar.png"}
-                className="w-12 h-12 rounded-full border-2 border-yellow-400"
-                alt="Avatar"
-              />
-              <div className="absolute -bottom-1 -right-1 bg-yellow-500 rounded-full w-5 h-5 flex items-center justify-center">
-                <GiTwoCoins className="text-black text-xs" />
-              </div>
-            </div>
+            <img
+              src={userData.profilePic || "/default-avatar.png"}
+              className="w-10 h-10 rounded-full border border-yellow-400"
+              alt="Avatar"
+            />
             <div>
               <p className="font-medium">{userData.username}</p>
               <p className="text-xs text-gray-400">{userData.email}</p>
             </div>
-          </motion.div>
+          </div>
 
           {/* Game Info */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className={`p-5 rounded-xl ${colors.card} shadow-lg mb-6 border border-gray-700`}
-          >
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="bg-gray-700 p-3 rounded-lg">
-                <p className="text-xs text-gray-400 mb-1">Round ID</p>
+          <div className={`p-4 rounded-lg ${colors.card} mb-4`}>
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <p className="text-xs text-gray-400">Round ID</p>
                 <p className="font-medium text-sm truncate">
-                  #{roundId ? roundId.slice(0, 8) : "--------"}
+                  #{roundId.slice(0, 8)}
                 </p>
               </div>
-              <div className="bg-gray-700 p-3 rounded-lg">
-                <p className="text-xs text-gray-400 mb-1">Time Left</p>
+              <div>
+                <p className="text-xs text-gray-400">Time Left</p>
                 <p
-                  className={`font-bold text-lg ${
+                  className={`font-bold ${
                     timeLeft < 10 ? "text-red-400" : "text-yellow-400"
                   }`}
                 >
@@ -344,198 +380,81 @@ export default function HeadTailGame() {
               </div>
             </div>
 
-            <div className={`p-3 rounded-lg ${colors.input} text-center mb-4`}>
-              <p className="text-sm truncate">{status}</p>
+            <div className={`p-3 rounded ${colors.input} text-center`}>
+              <p className="text-sm truncate">
+                {status || "Waiting for round..."}
+              </p>
             </div>
-
-            {/* Coin Animation */}
-            <div className="flex justify-center mb-4">
-              <motion.div
-                animate={{
-                  rotateY: isSpinning ? 360 : 0,
-                  scale: isSpinning ? 1.2 : 1,
-                }}
-                transition={{
-                  duration: isSpinning ? 0.5 : 0.3,
-                  repeat: isSpinning ? 3 : 0,
-                }}
-                className="w-24 h-24 rounded-full bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center shadow-lg border-4 border-yellow-300"
-              >
-                {choice && !isSpinning && (
-                  <div className="text-4xl">
-                    {choice === "head" ? <FaUserCircle /> : <GiFoxTail />}
-                  </div>
-                )}
-                {isSpinning && (
-                  <div className="text-4xl">
-                    <GiTwoCoins className="text-yellow-300" />
-                  </div>
-                )}
-              </motion.div>
-            </div>
-          </motion.div>
+          </div>
 
           {/* Bet Selection */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className={`p-5 rounded-xl ${colors.card} shadow-lg mb-6 border border-gray-700`}
-          >
-            <h2 className="text-xl font-bold mb-4 text-center">
-              CHOOSE YOUR BET
-            </h2>
-
-            <div className="flex gap-4 mb-6">
+          <div className={`p-4 rounded-lg ${colors.card} mb-4`}>
+            <h2 className="text-lg font-bold mb-3">CHOOSE YOUR BET</h2>
+            <div className="flex gap-3 mb-4">
               <button
                 onClick={() => handleChoice("head")}
-                className={`flex-1 py-4 rounded-xl font-bold transition-all flex flex-col items-center ${
-                  choice === "head" ? colors.activeHead : colors.button
-                } shadow-md`}
+                className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                  choice === "head" ? colors.active : colors.button
+                }`}
               >
-                <FaUserCircle size={28} className="mb-1" />
-                <span>HEAD</span>
+                HEAD
               </button>
               <button
                 onClick={() => handleChoice("tail")}
-                className={`flex-1 py-4 rounded-xl font-bold transition-all flex flex-col items-center ${
-                  choice === "tail" ? colors.activeTail : colors.button
-                } shadow-md`}
+                className={`flex-1 py-3 rounded-lg font-bold transition-all ${
+                  choice === "tail" ? colors.active : colors.button
+                }`}
               >
-                <GiFoxTail size={28} className="mb-1" />
-                <span>TAIL</span>
+                TAIL
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm text-gray-400 mb-1">
-                  BET AMOUNT (₹)
-                </label>
-                <input
-                  type="number"
-                  placeholder="Enter amount"
-                  value={betAmount}
-                  onChange={(e) =>
-                    setBetAmount(e.target.value ? Number(e.target.value) : 0)
-                  }
-                  min="10"
-                  max={userData.balance}
-                  className={`w-full px-4 py-3 rounded-lg ${colors.input} focus:outline-none focus:ring-2 focus:ring-yellow-500 border ${colors.border}`}
-                />
-                <div className="flex justify-between mt-1 text-xs text-gray-400">
-                  <span>Min: ₹10</span>
-                  <span>Max: ₹{userData.balance?.toFixed(2) || "0"}</span>
-                </div>
-              </div>
-
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={confirmBet}
+            <div className="space-y-3">
+              <input
+                type="tel"
+                placeholder="Enter bet amount (₹)"
+                value={betAmount}
+                onChange={(e) =>
+                  setBetAmount(e.target.value ? Number(e.target.value) : 0)
+                }
+                className={`w-full px-4 py-3 rounded-lg ${colors.input} focus:outline-none focus:ring-1 focus:ring-yellow-400`}
+              />
+              <button
+                onClick={placeBet}
                 disabled={!choice || !betAmount}
-                className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg ${
-                  !choice || !betAmount
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500"
-                } transition-all flex items-center justify-center gap-2`}
+                className={`w-full py-3 rounded-lg font-bold bg-yellow-600 hover:bg-yellow-500 transition-all ${
+                  (!choice || !betAmount) && "opacity-50 cursor-not-allowed"
+                }`}
               >
-                <GiTwoCoins /> PLACE BET
-              </motion.button>
+                PLACE BET
+              </button>
             </div>
-          </motion.div>
+          </div>
 
           {/* Recent Results */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className={`p-5 rounded-xl ${colors.card} shadow-lg border border-gray-700`}
-          >
-            <h2 className="text-xl font-bold mb-4 text-center">
-              RECENT RESULTS
-            </h2>
+          <div className={`p-4 rounded-lg ${colors.card}`}>
+            <h2 className="text-lg font-bold mb-3">RECENT RESULTS</h2>
             {resultHistory.length > 0 ? (
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex gap-2 overflow-x-auto pb-2">
                 {resultHistory.map((item, index) => (
-                  <motion.div
+                  <div
                     key={index}
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: index * 0.1 }}
-                    className={`flex-shrink-0 w-14 h-14 rounded-full flex flex-col items-center justify-center shadow-md ${
-                      item.result === "head" ? "bg-blue-600" : "bg-amber-600"
+                    className={`flex-shrink-0 w-16 h-16 rounded-full flex flex-col items-center justify-center ${
+                      item.result === "head" ? "bg-blue-900" : "bg-gray-700"
                     }`}
                   >
                     <span className="text-xs">#{item.roundId.slice(-4)}</span>
-                    <span className="font-bold">
+                    <span className="font-bold text-lg">
                       {item.result.toUpperCase().charAt(0)}
                     </span>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-6">
-                <div className="inline-block p-4 bg-gray-700 rounded-full mb-3">
-                  <GiTwoCoins className="text-gray-500 text-2xl" />
-                </div>
-                <p className="text-gray-400">No results yet</p>
-              </div>
+              <p className="text-gray-400 text-center py-4">No results yet</p>
             )}
-          </motion.div>
+          </div>
         </div>
-
-        {/* Confirmation Modal */}
-        <AnimatePresence>
-          {showConfirmModal && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4"
-            >
-              <motion.div
-                initial={{ scale: 0.9, y: 50 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 50 }}
-                className={`p-6 rounded-xl ${colors.card} max-w-sm w-full shadow-2xl border border-gray-700`}
-              >
-                <h3 className="text-xl font-bold mb-4 text-center">
-                  Confirm Your Bet
-                </h3>
-                <div className="space-y-4 mb-6">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Choice:</span>
-                    <span className="font-medium">{choice?.toUpperCase()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Amount:</span>
-                    <span className="font-medium">₹{betAmount}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Potential Win:</span>
-                    <span className="font-medium text-green-400">
-                      ₹{betAmount * 2}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowConfirmModal(false)}
-                    className="flex-1 py-3 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={placeBet}
-                    className="flex-1 py-3 rounded-lg bg-gradient-to-r from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 transition-all"
-                  >
-                    Confirm
-                  </button>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </>
   );

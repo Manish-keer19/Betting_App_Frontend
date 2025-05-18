@@ -15,8 +15,8 @@ import ResetPassword from "./components/Profile/ResetPassword";
 // import BettingUI from "./components/Games/BettingUI";
 import WheelGame from "./components/Games/WheelGame/WheelGame";
 import Navbar from "./components/Navbar";
-  
-
+import ForexTradingApp from "./components/Games/ForexTrading/ForexTradingApp";
+// import {ForexTradingApp} from "./components/Games/ForexTrading/ForexTradingApp";
 function App() {
   const route = createBrowserRouter([
     {
@@ -44,24 +44,28 @@ function App() {
       path: "/head-tail",
       element: <HeadTailGame />,
     },
+   
     {
       path: "/games",
       // element: <Allgames  />,
- element: (
-    <>
-      <Navbar />
-      <Allgames />
-    </>
-  )
-
+      element: (
+        <>
+          <Navbar />
+          <Allgames />
+        </>
+      ),
     },
     {
       path: "/reset-password",
       element: <ResetPassword />,
     },
     {
+      path: "/forex-game",
+      element: <ForexTradingApp />,
+    },
+    {
       path: "/wheel-game",
-      element: <WheelGame  />,
+      element: <WheelGame />,
     },
 
     {
