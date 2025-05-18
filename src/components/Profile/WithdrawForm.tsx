@@ -338,7 +338,7 @@ export const WithdrawForm = ({
 
     if (userData.bonusAmount !== 0) {
       toast.error(
-        `You need to play ₹${userData.bonusAmount} bonus amount before withdrawal`
+        `You need to play ₹${userData.bonusAmount}  amount before withdrawal`
       );
       return;
     }

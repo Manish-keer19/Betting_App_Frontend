@@ -425,7 +425,7 @@ const ForexTradingApp = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
-  const [betAmount, setBetAmount] = useState(20);
+  const [betAmount, setBetAmount] = useState(10);
   const [roundId, setRoundId] = useState("");
   const [history, setHistory] = useState<RoundHistory[]>([]);
   const [hasBet, setHasBet] = useState(false);
@@ -543,6 +543,19 @@ const ForexTradingApp = () => {
       setStatus(message);
       toast[result === "win" ? "success" : "error"](message);
 
+      if (result === "win") {
+        setUserData((prev: { balance: number }) => ({
+          ...prev,
+          balance: prev.balance + amount,
+        }));
+        dispatch(
+          setUser({
+            ...userData,
+            balance: userData.balance + amount,
+          })
+        );
+      }
+
       console.log("round outcome", result, amount, message, choice);
 
       if (!placedBetRef.current) {
@@ -580,19 +593,6 @@ const ForexTradingApp = () => {
 
       // setBetAmount(0);
 
-      if (result === "win") {
-        setUserData((prev: { balance: number }) => ({
-          ...prev,
-          balance: prev.balance + amount,
-        }));
-        dispatch(
-          setUser({
-            ...userData,
-            balance: userData.balance + amount,
-          })
-        );
-      }
-
       setPlacedBet(null);
     };
 
@@ -624,7 +624,7 @@ const ForexTradingApp = () => {
 
     // Register user and fetch initial data
     socket.emit("registerUser", user._id);
-    socket.emit("getUserBets", user._id);
+    // socket.emit("getUserBets", user._id);
 
     return () => {
       if (socket) {
@@ -698,6 +698,7 @@ const ForexTradingApp = () => {
       });
 
       setStatus(`Bet placed on "${choice.toUpperCase()}"`);
+      setBetAmount(10);
     },
     [socket, userData, betAmount, hasBet, roundId]
   );
