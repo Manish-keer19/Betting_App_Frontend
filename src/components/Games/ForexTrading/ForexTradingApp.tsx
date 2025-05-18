@@ -425,7 +425,7 @@ const ForexTradingApp = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [connected, setConnected] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
-  const [betAmount, setBetAmount] = useState(10);
+  const [betAmount, setBetAmount] = useState(20);
   const [roundId, setRoundId] = useState("");
   const [history, setHistory] = useState<RoundHistory[]>([]);
   const [hasBet, setHasBet] = useState(false);
@@ -433,12 +433,16 @@ const ForexTradingApp = () => {
   const [userBets, setUserBets] = useState<UserBet[]>([]);
   const [activeTab, setActiveTab] = useState("game"); // 'game' or 'history'
 
+  const placedBetRef = useRef<any>(null);
+
+  const [placedBet, setPlacedBet] = useState<{
+    roundId: string;
+    choice: "up" | "down";
+    amount: number;
+  } | null>(null);
   //  const [timeLeft, setTimeLeft] = useState(30);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const endTimeRef = useRef<number>(0);
-
-
-
 
   // Clean up on unmount
   useEffect(() => {
@@ -449,9 +453,7 @@ const ForexTradingApp = () => {
     };
   }, []);
 
-
-
-   const startTimer = useCallback((startedAt: string) => {
+  const startTimer = useCallback((startedAt: string) => {
     // Clear any existing timer first
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -462,9 +464,12 @@ const ForexTradingApp = () => {
     const serverStartTime = new Date(startedAt).getTime();
     endTimeRef.current = serverStartTime + 30000;
     const now = Date.now();
-    
+
     // Calculate initial time left (rounded to nearest second)
-    const initialLeft = Math.max(0, Math.round((endTimeRef.current - now) / 1000));
+    const initialLeft = Math.max(
+      0,
+      Math.round((endTimeRef.current - now) / 1000)
+    );
     setTimeLeft(initialLeft);
 
     // Only start timer if there's time left
@@ -477,7 +482,7 @@ const ForexTradingApp = () => {
     timerRef.current = setInterval(() => {
       const now = Date.now();
       const left = Math.max(0, Math.round((endTimeRef.current - now) / 1000));
-      
+
       setTimeLeft(left);
 
       // Clear interval when time is up
@@ -487,8 +492,6 @@ const ForexTradingApp = () => {
       }
     }, 100);
   }, []);
-
-
 
   // Initialize socket connection
   useEffect(() => {
@@ -541,13 +544,21 @@ const ForexTradingApp = () => {
       toast[result === "win" ? "success" : "error"](message);
 
       console.log("round outcome", result, amount, message, choice);
+
+      if (!placedBetRef.current) {
+        console.log("No bet placed for this round");
+        return;
+      }
+
+      const currentBet = placedBetRef.current;
+
       if (result === "win") {
         const newBet = {
           roundId: roundId,
           choice: choice as "up" | "down", // explicit cast
-          amount: betAmount, // example: 100
+          amount: currentBet.amount, // example: 100
           result: "win" as "win",
-          payout: betAmount * 1.95, // example: amount * 2 or custom logic
+          payout: amount, // example: amount * 2 or custom logic
           createdAt: new Date().toISOString(),
         };
         console.log("new bet in win ", newBet);
@@ -557,7 +568,7 @@ const ForexTradingApp = () => {
         const newBet = {
           roundId: roundId,
           choice: choice as "up" | "down", // explicit cast
-          amount: betAmount, // example: 100
+          amount: currentBet.amount, // example: 100
           result: "lose" as "lose",
           payout: 0,
           createdAt: new Date().toISOString(),
@@ -581,6 +592,8 @@ const ForexTradingApp = () => {
           })
         );
       }
+
+      setPlacedBet(null);
     };
 
     const onBetPlaced: SocketEvents["betPlaced"] = ({ amount, choice }) => {
@@ -626,25 +639,74 @@ const ForexTradingApp = () => {
     };
   }, [socket, user?._id]);
 
+  // const placeBet = useCallback(
+  //   (choice: "up" | "down") => {
+  //     if (!choice) return;
+  //     if (!socket || !userData?._id) return;
+  //     if (hasBet) return toast.error("You already bet this round");
+  //     // if (timeLeft < 5) return toast.error("Round is ending soon");
+  //     if (betAmount < 1) return toast.error("Invalid bet amount");
+  //     if (userData.balance < betAmount)
+  //       return toast.error("Insufficient balance");
+
+  //     setPlacedBet({
+  //       roundId,
+  //       choice: choice as "up" | "down",
+  //       amount: betAmount,
+  //     });
+
+  //     console.log("placed bet is ", placedBet);
+
+  //     socket.emit("placeBet", {
+  //       userId: userData._id,
+  //       choice,
+  //       amount: betAmount,
+  //     });
+  //   },
+  //   [socket, userData, betAmount, hasBet]
+  // );
+
   const placeBet = useCallback(
     (choice: "up" | "down") => {
+      if (!choice) return;
       if (!socket || !userData?._id) return;
       if (hasBet) return toast.error("You already bet this round");
-      // if (timeLeft < 5) return toast.error("Round is ending soon");
       if (betAmount < 1) return toast.error("Invalid bet amount");
       if (userData.balance < betAmount)
         return toast.error("Insufficient balance");
 
-      socket.emit("placeBet", {
-        userId: userData._id,
+      // Mark the bet as placed
+      setHasBet(true);
+
+      setPlacedBet({
+        roundId,
         choice,
         amount: betAmount,
       });
+      placedBetRef.current = {
+        roundId,
+        choice,
+        amount: betAmount,
+      };
+
+      // Emit to the server
+      socket.emit("placeBet", {
+        userId: userData._id,
+        roundId, // important to send roundId if server needs it
+        choice,
+        amount: betAmount,
+      });
+
+      setStatus(`Bet placed on "${choice.toUpperCase()}"`);
     },
-    [socket, userData, betAmount, hasBet]
+    [socket, userData, betAmount, hasBet, roundId]
   );
 
   const quickBets = [10, 50, 100, 500];
+
+  useEffect(() => {
+    console.log("placedBet changed:", placedBet);
+  }, [placedBet]);
 
   const getUserBalance = async () => {
     try {
