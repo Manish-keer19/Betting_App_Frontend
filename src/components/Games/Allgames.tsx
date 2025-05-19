@@ -206,7 +206,7 @@ function Allgames() {
                 theme === "black" ? "text-green-900" : "text-white"
               }`}
             >
-              Trade Market Game
+              Risefall Game
             </h2>
             <p
               className={`mb-6 ${

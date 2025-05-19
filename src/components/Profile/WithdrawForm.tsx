@@ -308,7 +308,7 @@ export const WithdrawForm = ({
   isGreenTheme,
 }: WithdrawFormProps) => {
   const user = useSelector((state: any) => state.user);
-  const [amount, setAmount] = useState<number>(110);
+  const [amount, setAmount] = useState<number>(500);
   const [withdrawalMethod, setWithdrawalMethod] = useState<"bank" | "upi">(
     "bank"
   );
@@ -331,8 +331,8 @@ export const WithdrawForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (amount < 110) {
-      toast.error("Minimum withdrawal amount is ₹100");
+    if (amount < 500) {
+      toast.error("Minimum withdrawal amount is 500");
       return;
     }
 
@@ -392,8 +392,8 @@ export const WithdrawForm = ({
   };
 
   const validateForm = (): boolean => {
-    if (amount < 100) {
-      toast.error("Minimum withdrawal amount is ₹100");
+    if (amount < 500) {
+      toast.error("Minimum withdrawal amount is ₹500");
       return false;
     }
 
@@ -554,7 +554,7 @@ export const WithdrawForm = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-300">
-              Amount (Minimum ₹100)
+              Amount (Minimum ₹500)
             </label>
             <input
               type="tel" // Changed to number type for better mobile experience
@@ -572,7 +572,7 @@ export const WithdrawForm = ({
               <p className="text-xs text-gray-400">
                 You need to play{" "}
                 <span className="font-bold ">₹{userData.bonusAmount}</span>{" "}
-                bonus amount before withdrawal
+                amount before withdrawal
               </p>
             )}
           </div>

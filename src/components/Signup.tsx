@@ -22,7 +22,7 @@ console.log("ref is ",ref);
   // State to control whether OTP has been sent
   const [otpSent, setOtpSent] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [referralCode, setReferralCode] = useState<string>(ref||"");
+  const [referralCode, setReferralCode] = useState<string>(ref||"u");
   const [dob, setDob] = useState<string>("");
 
   // State for feedback (error or success)

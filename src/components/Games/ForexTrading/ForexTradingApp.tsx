@@ -666,6 +666,13 @@ const ForexTradingApp = () => {
   //   [socket, userData, betAmount, hasBet]
   // );
 
+  const handleBetAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^\d*\.?\d{0,2}$/.test(value) || value === "") {
+      setBetAmount(value === "" ? 0 : Number(value));
+    }
+  };
+
   const placeBet = useCallback(
     (choice: "up" | "down") => {
       if (!choice) return;
@@ -898,11 +905,9 @@ const ForexTradingApp = () => {
               <label className="block mb-2 text-gray-300">Bet Amount (₹)</label>
               <div className="flex mb-2">
                 <input
-                  type="number"
+                  type="text"
                   value={betAmount}
-                  onChange={(e) =>
-                    setBetAmount(Math.max(1, Number(e.target.value) || 1))
-                  }
+                  onChange={handleBetAmountChange}
                   className="w-full p-3 rounded-l bg-gray-700 focus:outline-none"
                   min="1"
                 />

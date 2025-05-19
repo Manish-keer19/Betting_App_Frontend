@@ -557,7 +557,7 @@ type Deposit = {
 };
 
 export const DepositForm = ({ theme }: DepositFormProps) => {
-  const [amount, setAmount] = useState<number>(100);
+  const [amount, setAmount] = useState<number>(200);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const [transactionId, setTransactionId] = useState<string>("");
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
@@ -721,7 +721,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Amount (Minimum ₹100)
+                  Amount (Minimum 200)
                 </label>
                 <input
                   type="tel"
@@ -735,8 +735,8 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
 
               <button
                 onClick={() => {
-                  if (amount < 100) {
-                    toast.error("Minimum deposit amount is ₹100");
+                  if (amount < 200) {
+                    toast.error("Minimum deposit amount is 200");
                     return;
                   }
                   setShowPaymentDetails(true);
