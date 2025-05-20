@@ -1,542 +1,3 @@
-// // // import { useState } from 'react';
-// // // import { toast } from 'react-toastify';
-// // // import { QRCodeSVG } from 'qrcode.react';
-// // // import { ThemeType } from './types';
-
-// // // type DepositFormProps = {
-// // //   onDeposit: (amount: number) => void;
-// // //   theme: ThemeType;
-// // // };
-
-// // // export const DepositForm = ({ onDeposit, theme }: DepositFormProps) => {
-// // //   const [amount, setAmount] = useState<number>(100);
-// // //   const [paymentMethod, setPaymentMethod] = useState<'upi'>('upi');
-// // //   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
-
-// // //   const handleDeposit = () => {
-// // //     if (amount < 100) {
-// // //       toast.error('Minimum deposit amount is ₹100');
-// // //       return;
-// // //     }
-// // //     setShowPaymentDetails(true);
-// // //     onDeposit(amount);
-// // //   };
-
-// // //   const isGreenTheme = theme === 'green';
-
-// // //   return (
-
-// // //     <div className="space-y-6">
-
-// // //       <div className="space-y-4">
-// // //         <div>
-// // //           <label className="block mb-2">Amount (Minimum ₹100)</label>
-// // //           <input
-// // //             type="number"
-
-// // //             value={amount}
-// // //             onChange={(e) => setAmount(Math.max(100, Number(e.target.value)))}
-// // //             className="w-full p-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30"
-// // //           />
-// // //         </div>
-
-// // //         <div>
-// // //           <label className="block mb-2">Payment Method</label>
-// // //           <div className="flex gap-4">
-// // //             <button
-// // //               onClick={() => setPaymentMethod('upi')}
-// // //               className={`px-4 py-2 rounded-lg ${paymentMethod === 'upi' ?
-// // //                 (isGreenTheme ? 'bg-green-600' : 'bg-gray-800') : 'bg-white bg-opacity-10'}`}
-// // //             >
-// // //               UPI
-// // //             </button>
-
-// // //           </div>
-// // //         </div>
-
-// // //         <button
-// // //           onClick={handleDeposit}
-// // //           className={`w-full py-3 rounded-lg font-bold ${isGreenTheme ? 'bg-green-600 hover:bg-green-800' : 'bg-gray-800 hover:bg-gray-700'}`}
-// // //         >
-// // //           Proceed to Pay ₹{amount}
-// // //         </button>
-// // //       </div>
-
-// // //       {showPaymentDetails && paymentMethod === 'upi' && (
-// // //         <div className="p-6 bg-white bg-opacity-10 rounded-lg flex flex-col items-center">
-// // //           <h3 className="text-xl font-semibold mb-4">Scan QR Code to Pay</h3>
-// // //           <div className="p-4 bg-white rounded-lg mb-4">
-// // //             <QRCodeSVG
-// // //               value={`upi://pay?pa=your-upi-id@oksbi&pn=YourAppName&am=${amount}&cu=INR`}
-// // //               size={200}
-// // //             />
-// // //           </div>
-// // //           <p className="text-center mb-2">Amount: ₹{amount}</p>
-// // //           <p className="text-center">UPI ID: your-upi-id@oksbi</p>
-// // //         </div>
-// // //       )}
-// // //     </div>
-// // //   );
-// // // };
-
-// // import { useState, useEffect } from "react";
-// // import toast from "react-hot-toast";
-// // import { QRCodeSVG } from "qrcode.react";
-// // import { ThemeType } from "./types";
-// // import { userService } from "../../Services/userService";
-// // import { useSelector } from "react-redux";
-// // import { data } from "react-router-dom";
-
-// // type Deposit = {
-// //   _id: string;
-// //   amount: number;
-// //   status: string;
-// //   transactionId: string;
-// //   paymentScreenshot: string;
-// //   createdAt: string;
-// // };
-
-// // type DepositFormProps = {
-// //   onDeposit: (amount: number) => void;
-// //   theme: ThemeType;
-// // };
-
-// // export const DepositForm = ({ onDeposit, theme }: DepositFormProps) => {
-// //   const [amount, setAmount] = useState<number>(100);
-// //   const [paymentMethod, setPaymentMethod] = useState<"upi">("upi");
-// //   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
-// //   const [deposits, setDeposits] = useState<Deposit[]>([]);
-// //   const [loading, setLoading] = useState(false);
-
-// //   const user = useSelector((state: any) => state.user);
-
-// //   const [token, setToken] = useState<string>(user.token);
-
-// //   const isGreenTheme = theme === "green";
-
-// //   // Fetch user deposits
-// //   useEffect(() => {
-// //     const fetchDeposits = async () => {
-// //       const userId = user._id;
-
-// //       if (!userId || !token) {
-// //         toast.error("User not found or token missing");
-// //         return;
-// //       }
-
-// //       try {
-// //         setLoading(true);
-// //         const res = await userService.getUserDeposits(userId, token);
-// //         if (res.success) {
-// //           setDeposits(res.data);
-// //         }
-// //       } catch (error) {
-// //         toast.error("Failed to fetch deposit history");
-// //       } finally {
-// //         setLoading(false);
-// //       }
-// //     };
-
-// //     fetchDeposits();
-// //   }, []);
-
-// //   const handleDeposit = async () => {
-// //     try {
-
-// //         const data = {
-// //             amount,
-// //             transactionId:"1234567890", // Replace with actual transaction ID,
-// //             PaymentScreenShot:
-// //         }
-
-// //       if (!data || !token) {
-// //         toast.error("User not found or token missing");
-// //         return;
-// //       }
-
-// //       setLoading(true);
-// //       const res = await userService.depositMoney(data, token);
-// //       if (res.success) {
-// //         toast.success("Deposit request submitted successfully");
-// //         setDeposits((prevDeposits) => [res.data, ...prevDeposits]);
-// //         setShowPaymentDetails(false);
-// //         setAmount(100); // Reset amount after deposit
-// //       } else {
-// //         toast.error(res.message || "Failed to submit deposit request");
-// //       }
-// //     } catch (error) {
-// //       console.error("Error during deposit:", error);
-// //       toast.error("Failed to process deposit. Please try again.");
-// //     }
-// //   };
-
-// //   const handleQRPay = () => {
-// //     if (amount < 100) {
-// //       toast.error("Minimum deposit amount is ₹100");
-// //       return;
-// //     }
-// //     setShowPaymentDetails(true);
-// //     onDeposit(amount);
-// //   };
-
-// //   const formatDate = (dateString: string) => {
-// //     return new Date(dateString).toLocaleDateString("en-IN", {
-// //       day: "2-digit",
-// //       month: "short",
-// //       year: "numeric",
-// //       hour: "2-digit",
-// //       minute: "2-digit",
-// //     });
-// //   };
-
-// //   return (
-// //     <div className="space-y-6">
-// //       {/* Deposit Form Section */}
-// //       <div className="space-y-4">
-// //         <div>
-// //           <label className="block mb-2">Amount (Minimum ₹100)</label>
-// //           <input
-// //             type="number"
-// //             min="100"
-// //             value={amount}
-// //             onChange={(e) => setAmount(Math.max(100, Number(e.target.value)))}
-// //             className="w-full p-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30"
-// //           />
-// //         </div>
-
-// //         <div>
-// //           <label className="block mb-2">Payment Method</label>
-// //           <div className="flex gap-4">
-// //             <button
-// //               onClick={() => setPaymentMethod("upi")}
-// //               className={`px-4 py-2 rounded-lg ${
-// //                 paymentMethod === "upi"
-// //                   ? isGreenTheme
-// //                     ? "bg-green-600"
-// //                     : "bg-gray-800"
-// //                   : "bg-white bg-opacity-10"
-// //               }`}
-// //             >
-// //               UPI
-// //             </button>
-// //           </div>
-// //         </div>
-
-// //         <button
-// //           onClick={handleQRPay}
-// //           className={`w-full py-3 rounded-lg font-bold ${
-// //             isGreenTheme
-// //               ? "bg-green-600 hover:bg-green-800"
-// //               : "bg-gray-800 hover:bg-gray-700"
-// //           }`}
-// //         >
-// //           Proceed to Pay ₹{amount}
-// //         </button>
-// //       </div>
-
-// //       {/* Payment QR Section */}
-// //       {showPaymentDetails && paymentMethod === "upi" && (
-// //         <>
-// //           <div className="p-6 bg-white bg-opacity-10 rounded-lg flex flex-col items-center">
-// //             <h3 className="text-xl font-semibold mb-4">Scan QR Code to Pay</h3>
-// //             <div className="p-4 bg-white rounded-lg mb-4">
-// //               <QRCodeSVG
-// //                 value={`upi://pay?pa=your-upi-id@oksbi&pn=YourAppName&am=${amount}&cu=INR`}
-// //                 size={200}
-// //               />
-// //             </div>
-// //             <p className="text-center mb-2">Amount: ₹{amount}</p>
-// //             <p className="text-center">UPI ID: your-upi-id@oksbi</p>
-// //           </div>
-
-// //           <button
-// //             onClick={handleDeposit}
-// //             className={`w-full py-3 rounded-lg font-bold ${
-// //               isGreenTheme
-// //                 ? "bg-green-600 hover:bg-green-800"
-// //                 : "bg-gray-800 hover:bg-gray-700"
-// //             }`}
-// //           >
-// //             I have paid
-// //           </button>
-// //         </>
-// //       )}
-
-// //       {/* Deposit History Section */}
-// //       <div className="mt-8">
-// //         <h3 className="text-xl font-semibold mb-4">Your Deposit History</h3>
-
-// //         {loading ? (
-// //           <div className="text-center py-4">Loading deposits...</div>
-// //         ) : deposits.length === 0 ? (
-// //           <div className="text-center py-4 bg-white bg-opacity-10 rounded-lg">
-// //             No deposits found
-// //           </div>
-// //         ) : (
-// //           <div className="overflow-x-auto">
-// //             <table className="w-full bg-white bg-opacity-10 rounded-lg">
-// //               <thead>
-// //                 <tr
-// //                   className={`${isGreenTheme ? "bg-green-800" : "bg-gray-800"}`}
-// //                 >
-// //                   <th className="px-4 py-3 text-left">Amount</th>
-// //                   <th className="px-4 py-3 text-left">Status</th>
-// //                   <th className="px-4 py-3 text-left">Transaction ID</th>
-// //                   <th className="px-4 py-3 text-left">Date</th>
-// //                   <th className="px-4 py-3 text-left">Receipt</th>
-// //                 </tr>
-// //               </thead>
-// //               <tbody>
-// //                 {deposits.map((deposit) => (
-// //                   <tr
-// //                     key={deposit._id}
-// //                     className="border-b border-white border-opacity-10 hover:bg-white hover:bg-opacity-5"
-// //                   >
-// //                     <td className="px-4 py-3">₹{deposit.amount}</td>
-// //                     <td className="px-4 py-3">
-// //                       <span
-// //                         className={`px-2 py-1 rounded-full text-xs ${
-// //                           deposit.status === "COMPLETED"
-// //                             ? "bg-green-500"
-// //                             : deposit.status === "PENDING"
-// //                             ? "bg-yellow-500"
-// //                             : "bg-red-500"
-// //                         }`}
-// //                       >
-// //                         {deposit.status}
-// //                       </span>
-// //                     </td>
-// //                     <td className="px-4 py-3">{deposit.transactionId}</td>
-// //                     <td className="px-4 py-3">
-// //                       {formatDate(deposit.createdAt)}
-// //                     </td>
-// //                     <td className="px-4 py-3">
-// //                       {deposit.paymentScreenshot && (
-// //                         <a
-// //                           href={deposit.paymentScreenshot}
-// //                           target="_blank"
-// //                           rel="noopener noreferrer"
-// //                           className="text-blue-400 hover:underline"
-// //                         >
-// //                           View Receipt
-// //                         </a>
-// //                       )}
-// //                     </td>
-// //                   </tr>
-// //                 ))}
-// //               </tbody>
-// //             </table>
-// //           </div>
-// //         )}
-// //       </div>
-// //     </div>
-// //   );
-// // };
-
-// import { useState, useRef, ChangeEvent } from "react";
-// import toast from "react-hot-toast";
-// import { QRCodeSVG } from "qrcode.react";
-// import { useSelector } from "react-redux";
-// import { userService } from "../../Services/userService";
-// import { DepositHistory } from "./DepositHistory";
-
-// type DepositFormProps = {
-//   theme: "green" | "black";
-// };
-
-// export const DepositForm = ({ theme }: DepositFormProps) => {
-//   const [amount, setAmount] = useState<number>(100);
-//   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
-//   const [transactionId, setTransactionId] = useState<string>("");
-//   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
-//   const [previewImage, setPreviewImage] = useState<string | null>(null);
-//   const [isSubmitting, setIsSubmitting] = useState(false);
-//   const fileInputRef = useRef<HTMLInputElement>(null);
-
-//   const user = useSelector((state: any) => state.user);
-//   const isGreenTheme = theme === "green";
-
-//   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-//     if (e.target.files && e.target.files[0]) {
-//       const file = e.target.files[0];
-//       setPaymentScreenshot(file);
-
-//       // Create preview URL
-//       const reader = new FileReader();
-//       reader.onloadend = () => {
-//         setPreviewImage(reader.result as string);
-//       };
-//       reader.readAsDataURL(file);
-//     }
-//   };
-
-//   const removeImage = () => {
-//     setPaymentScreenshot(null);
-//     setPreviewImage(null);
-//     if (fileInputRef.current) {
-//       fileInputRef.current.value = "";
-//     }
-//   };
-
-//   const handleSubmitDeposit = async () => {
-//     if (!paymentScreenshot) {
-//       toast.error("Please upload payment screenshot");
-//       return;
-//     }
-
-//     if (!transactionId) {
-//       toast.error("Please enter transaction ID");
-//       return;
-//     }
-
-//     setIsSubmitting(true);
-
-//     try {
-//       const formData = new FormData();
-//       formData.append("amount", amount.toString());
-//       formData.append("transactionId", transactionId);
-//       formData.append("image", paymentScreenshot);
-//       console.log("image", Image);
-//       cons;
-
-//       const response = await userService.depositMoney(formData, user.token);
-
-//       if (response.success) {
-//         toast.success("Deposit submitted successfully!");
-//         // Reset form
-//         setAmount(100);
-//         setTransactionId("");
-//         setPaymentScreenshot(null);
-//         setPreviewImage(null);
-//         setShowPaymentDetails(false);
-//         if (fileInputRef.current) {
-//           fileInputRef.current.value = "";
-//         }
-//       } else {
-//         toast.error(response.message || "Deposit submission failed");
-//       }
-//     } catch (error) {
-//       toast.error("An error occurred while submitting deposit");
-//     } finally {
-//       setIsSubmitting(false);
-//     }
-//   };
-
-//   return (
-//     <div className="space-y-6">
-//       {/* Deposit Form */}
-//       <div className="space-y-4">
-//         <div>
-//           <label className="block mb-2">Amount (Minimum ₹100)</label>
-//           <input
-//             type="number"
-//             min="100"
-//             value={amount}
-//             onChange={(e) => setAmount(Math.max(100, Number(e.target.value)))}
-//             className="w-full p-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30"
-//           />
-//         </div>
-
-//         <button
-//           onClick={() => setShowPaymentDetails(true)}
-//           className={`w-full py-3 rounded-lg font-bold ${
-//             isGreenTheme
-//               ? "bg-green-600 hover:bg-green-800"
-//               : "bg-gray-800 hover:bg-gray-700"
-//           }`}
-//         >
-//           Proceed to Pay ₹{amount}
-//         </button>
-//       </div>
-
-//       {/* Payment Details Section */}
-//       {showPaymentDetails && (
-//         <div className="space-y-4 p-6 bg-white bg-opacity-10 rounded-lg">
-//           <div className="flex flex-col items-center">
-//             <h3 className="text-xl font-semibold mb-4">Payment Instructions</h3>
-//             <div className="p-4 bg-white rounded-lg mb-4">
-//               <QRCodeSVG
-//                 value={`upi://pay?pa=your-upi-id@oksbi&pn=YourAppName&am=${amount}&cu=INR`}
-//                 size={200}
-//               />
-//             </div>
-//             <p className="text-center mb-2">Amount: ₹{amount}</p>
-//             <p className="text-center mb-6">UPI ID: your-upi-id@oksbi</p>
-//           </div>
-
-//           <div className="space-y-4">
-//             <div>
-//               <label className="block mb-2">Transaction ID</label>
-//               <input
-//                 type="text"
-//                 value={transactionId}
-//                 onChange={(e) => setTransactionId(e.target.value)}
-//                 placeholder="Enter transaction ID from payment app"
-//                 className="w-full p-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30"
-//               />
-//             </div>
-
-//             <div>
-//               <label className="block mb-2">Payment Screenshot</label>
-//               <input
-//                 type="file"
-//                 ref={fileInputRef}
-//                 onChange={handleFileChange}
-//                 accept="image/*"
-//                 className="w-full p-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30"
-//               />
-
-//               {previewImage && (
-//                 <div className="mt-4 relative">
-//                   <img
-//                     src={previewImage}
-//                     alt="Payment preview"
-//                     className="max-w-full h-auto max-h-60 rounded-lg border border-white border-opacity-30"
-//                   />
-//                   <button
-//                     onClick={removeImage}
-//                     className={`absolute top-2 right-2 p-1 rounded-full ${
-//                       isGreenTheme
-//                         ? "bg-green-600 hover:bg-green-700"
-//                         : "bg-gray-800 hover:bg-gray-700"
-//                     }`}
-//                   >
-//                     <svg
-//                       xmlns="http://www.w3.org/2000/svg"
-//                       className="h-5 w-5"
-//                       viewBox="0 0 20 20"
-//                       fill="currentColor"
-//                     >
-//                       <path
-//                         fillRule="evenodd"
-//                         d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-//                         clipRule="evenodd"
-//                       />
-//                     </svg>
-//                   </button>
-//                 </div>
-//               )}
-//             </div>
-
-//             <button
-//               onClick={handleSubmitDeposit}
-//               disabled={isSubmitting}
-//               className={`w-full py-3 rounded-lg font-bold ${
-//                 isGreenTheme
-//                   ? "bg-green-600 hover:bg-green-800"
-//                   : "bg-gray-800 hover:bg-gray-700"
-//               } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
-//             >
-//               {isSubmitting ? "Submitting..." : "Submit Payment Proof"}
-//             </button>
-//           </div>
-//         </div>
-//       )}
-//       <DepositHistory theme="black" />
-//     </div>
-//   );
-// };
-
 import { useState, useRef, ChangeEvent, useEffect } from "react";
 import toast from "react-hot-toast";
 import { QRCodeSVG } from "qrcode.react";
@@ -718,38 +179,81 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
       {activeTab === "deposit" ? (
         <div className="space-y-6">
           {!showPaymentDetails ? (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Amount (Minimum 200)
-                </label>
-                <input
-                  type="tel"
-                  onChange={(e) =>
-                    setAmount(e.target.value ? Number(e.target.value) : 0)
-                  }
-                  value={amount}
-                  className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-              </div>
-
-              <button
-                onClick={() => {
-                  if (amount < 200) {
-                    toast.error("Minimum deposit amount is 200");
-                    return;
-                  }
-                  setShowPaymentDetails(true);
-                }}
-                className={`w-full py-3 rounded-lg font-bold transition-colors ${
-                  isGreenTheme
-                    ? "bg-green-600 hover:bg-green-700 text-white"
-                    : "bg-gray-700 hover:bg-gray-600 text-white"
+            <>
+              <div
+                className={`p-4 mb-4 rounded-lg ${
+                  isGreenTheme ? "bg-green-900 bg-opacity-30" : "bg-gray-800"
                 }`}
               >
-                Proceed to Pay ₹{amount}
-              </button>
-            </div>
+                <div className="flex items-start">
+                  <div
+                    className={`flex-shrink-0 p-1 rounded-full ${
+                      isGreenTheme ? "bg-green-500" : "bg-gray-600"
+                    }`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-white"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3
+                      className={`text-sm font-medium ${
+                        isGreenTheme ? "text-green-300" : "text-gray-300"
+                      }`}
+                    >
+                      Deposit Bonus & Processing Time
+                    </h3>
+                    <div className="mt-1 text-sm text-gray-300">
+                      <p>• Get 5% bonus on all deposits</p>
+                      <p>
+                        • Deposits take 15-30 minutes to reflect in your wallet
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Amount (Minimum 200)
+                  </label>
+                  <input
+                    type="tel"
+                    onChange={(e) =>
+                      setAmount(e.target.value ? Number(e.target.value) : 0)
+                    }
+                    value={amount}
+                    className="w-full p-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+
+                <button
+                  onClick={() => {
+                    if (amount < 200) {
+                      toast.error("Minimum deposit amount is 200");
+                      return;
+                    }
+                    setShowPaymentDetails(true);
+                  }}
+                  className={`w-full py-3 rounded-lg font-bold transition-colors ${
+                    isGreenTheme
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-gray-700 hover:bg-gray-600 text-white"
+                  }`}
+                >
+                  Proceed to Pay ₹{amount}
+                </button>
+              </div>
+            </>
           ) : (
             <div className="space-y-6 p-4 bg-gray-800 rounded-lg">
               <div className="flex flex-col items-center space-y-4">
