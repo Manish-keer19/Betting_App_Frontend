@@ -10,6 +10,7 @@ import { io, Socket } from "socket.io-client";
 import Navbar from "../../Navbar";
 import { userService } from "../../../Services/userService";
 import { TfiReload } from "react-icons/tfi";
+// import { FaChevronUp, FaChevronDown, FaCoins } from 'react-icons/fa';
 
 
 import { Howl } from 'howler';
@@ -44,7 +45,7 @@ type SocketEvents = {
 
 type RoundHistory = {
   roundId: string;
-  result: "up" | "down";
+  result: "up" | "down"
   totals: { up: number; down: number };
   endedAt: string;
 };
@@ -557,8 +558,78 @@ const ForexTradingApp = () => {
   //   );
   // };
 
+  // const BetHistoryItem = ({ bet }: { bet: UserBet }) => {
+  //   const date = new Date(bet.createdAt).toLocaleTimeString();
+  //   const isWin = bet.result === "win";
+  //   const isPending = bet.result === "pending";
+
+  //   return (
+  //     <div
+  //       className={`p-3 mb-2 rounded-lg ${
+  //         isPending
+  //           ? "bg-gray-800/50"
+  //           : isWin
+  //           ? "bg-green-900/50"
+  //           : "bg-red-900/50"
+  //       }`}
+  //     >
+  //       <div className="flex justify-between items-center">
+  //         <div>
+  //           <span className="font-semibold">Round #{bet.roundId}</span>
+  //           <span className="text-xs ml-2 text-gray-400">{date}</span>
+  //         </div>
+  //         <div
+  //           className={`font-bold ${
+  //             isPending
+  //               ? "text-gray-400"
+  //               : isWin
+  //               ? "text-green-400"
+  //               : "text-red-400"
+  //           }`}
+  //         >
+  //           {isPending
+  //             ? "Pending"
+  //             : isWin
+  //             ? `+₹${bet.payout.toFixed(2)}`
+  //             : `-₹${bet.amount.toFixed(2)}`}
+  //         </div>
+  //       </div>
+  //       <div className="flex justify-between mt-1 text-sm">
+  //         <div
+  //           className={`flex items-center ${
+  //             bet.choice === "up" ? "text-green-400" : "text-red-400"
+  //           }`}
+  //         >
+  //           {bet.choice === "up" ? (
+  //             <FaChevronUp className="mr-1" />
+  //           ) : (
+  //             <FaChevronDown className="mr-1" />
+  //           )}
+  //           {bet.choice.toUpperCase()}
+  //         </div>
+  //         <div className="flex items-center text-yellow-400">
+  //           <FaCoins className="mr-1" />₹{bet.amount.toFixed(2)}
+  //         </div>
+  //       </div>
+  //       {isPending && (
+  //         <div className="text-xs text-center mt-2 text-gray-300">
+  //           Waiting for result...
+  //         </div>
+  //       )}
+  //     </div>
+  //   );
+  // };
+
+
+
+
   const BetHistoryItem = ({ bet }: { bet: UserBet }) => {
-    const date = new Date(bet.createdAt).toLocaleTimeString();
+    // Format date to be more compact on mobile
+    const date = new Date(bet.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    // Shorten round ID to 6 characters (like "55aabb")
+    const shortRoundId = bet.roundId.length > 6 ? `${bet.roundId.slice(0, 2)}${bet.roundId.slice(-4)}` : bet.roundId;
+    
     const isWin = bet.result === "win";
     const isPending = bet.result === "pending";
 
@@ -572,13 +643,13 @@ const ForexTradingApp = () => {
             : "bg-red-900/50"
         }`}
       >
-        <div className="flex justify-between items-center">
-          <div>
-            <span className="font-semibold">Round #{bet.roundId}</span>
-            <span className="text-xs ml-2 text-gray-400">{date}</span>
+        <div className="flex justify-between items-center flex-wrap gap-2">
+          <div className="flex items-center">
+            <span className="font-semibold text-sm sm:text-base">Round #{shortRoundId}</span>
+            <span className="text-xs ml-2 text-gray-400 hidden xs:inline">{date}</span>
           </div>
           <div
-            className={`font-bold ${
+            className={`font-bold text-sm sm:text-base ${
               isPending
                 ? "text-gray-400"
                 : isWin
@@ -593,21 +664,25 @@ const ForexTradingApp = () => {
               : `-₹${bet.amount.toFixed(2)}`}
           </div>
         </div>
-        <div className="flex justify-between mt-1 text-sm">
+        
+        {/* Mobile-only date */}
+        <div className="xs:hidden text-xs text-gray-400 mt-1">{date}</div>
+        
+        <div className="flex justify-between mt-1 text-xs sm:text-sm">
           <div
             className={`flex items-center ${
               bet.choice === "up" ? "text-green-400" : "text-red-400"
             }`}
           >
             {bet.choice === "up" ? (
-              <FaChevronUp className="mr-1" />
+              <FaChevronUp className="mr-1" size={12} />
             ) : (
-              <FaChevronDown className="mr-1" />
+              <FaChevronDown className="mr-1" size={12} />
             )}
             {bet.choice.toUpperCase()}
           </div>
           <div className="flex items-center text-yellow-400">
-            <FaCoins className="mr-1" />₹{bet.amount.toFixed(2)}
+            <FaCoins className="mr-1" size={12} />₹{bet.amount.toFixed(2)}
           </div>
         </div>
         {isPending && (
