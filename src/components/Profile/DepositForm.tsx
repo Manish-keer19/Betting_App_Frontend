@@ -18,7 +18,7 @@ type Deposit = {
 };
 
 export const DepositForm = ({ theme }: DepositFormProps) => {
-  const [amount, setAmount] = useState<number>(200);
+  const [amount, setAmount] = useState<number>(300);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const [transactionId, setTransactionId] = useState<string>("");
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
@@ -192,7 +192,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                     }`}
                   >
                     <svg
-                      xmlns="http://www.w3.org/2000/svg"
+                      xmlns="http://www.w3.org/3000/svg"
                       className="h-5 w-5 text-white"
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -224,7 +224,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Amount (Minimum 200)
+                    Amount (Minimum 300)
                   </label>
                   <input
                     type="tel"
@@ -238,8 +238,8 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
 
                 <button
                   onClick={() => {
-                    if (amount < 200) {
-                      toast.error("Minimum deposit amount is 200");
+                    if (amount < 300) {
+                      toast.error("Minimum deposit amount is 300");
                       return;
                     }
                     setShowPaymentDetails(true);
@@ -262,13 +262,14 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                 </h3>
                 <div className="p-4 bg-white rounded-lg">
                   <QRCodeSVG
-                    value={`upi://pay?pa=your-upi-id@oksbi&pn=YourAppName&am=${amount}&cu=INR`}
+                    // value={`upi://pay?pa=your-upi-id@oksbi&pn=YourAppName&am=${amount}&cu=INR`}
+                    value={`upi://pay?pa=ameyalaadd@ibl&pn=YourAppName&am=${amount}&cu=INR`}
                     size={180}
                   />
                 </div>
                 <div className="text-center space-y-1">
                   <p className="text-lg font-medium text-white">₹{amount}</p>
-                  <p className="text-gray-300">UPI ID: your-upi-id@oksbi</p>
+                  {/* <p className="text-gray-300">UPI ID: your-upi-id@oksbi</p> */}
                   <p className="text-sm text-gray-400 mt-2">
                     Please complete the payment and submit the screenshot below
                   </p>
@@ -301,7 +302,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="http://www.w3.org/3000/svg"
                         >
                           <path
                             strokeLinecap="round"
@@ -340,7 +341,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                         }`}
                       >
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="http://www.w3.org/3000/svg"
                           className="h-5 w-5"
                           viewBox="0 0 20 20"
                           fill="currentColor"
@@ -380,7 +381,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                       <span className="flex items-center justify-center">
                         <svg
                           className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="http://www.w3.org/3000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
                         >

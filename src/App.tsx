@@ -72,6 +72,8 @@ function App() {
       path: "*",
       element: <NotFound />,
     },
+
+   
   ]);
   return (
     <Provider store={store}>
