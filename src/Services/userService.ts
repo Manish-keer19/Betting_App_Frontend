@@ -162,17 +162,13 @@ class UserService {
     }
   }
 
-
-  async getUserBonus (userId: string, token: string) {
+  async getUserBonus(userId: string, token: string) {
     try {
-      const res = await axiosInstance.get(
-        `/user/get-user-bonus/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await axiosInstance.get(`/user/get-user-bonus/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       console.log("User bonus response:", res.data);
       if (res.data.success) {
         return res.data;
@@ -182,7 +178,41 @@ class UserService {
       throw error;
     }
   }
- 
+
+  async getUserBetHistoryHeadTail(token: string) {
+    try {
+      const res = await axiosInstance.get("/user/get-head-tail-gameHistory", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("User bet history response:", res.data);
+      if (res.data.success) {
+        return res.data;
+      }
+    } catch (error) {
+      console.error("Error fetching user bet history:", error);
+      throw error;
+    }
+  }
+
+  async getUserBetHistoryByGameTyp(token: string,gameType:String) {
+
+    try {
+      const res = await axiosInstance.get(`/user/get-bet-history/${gameType}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("User bet history response:", res.data);
+      if (res.data.success) {
+        return res.data;
+      }
+    } catch (error) {
+      console.error("Error fetching user bet history:", error);
+      throw error;
+    }
+  }
 }
 
 export const userService = new UserService();

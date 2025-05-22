@@ -8,6 +8,9 @@ import { userService } from "../../Services/userService";
 import { setUser } from "../../features/userSlice";
 import Navbar from "../Navbar";
 import { WebSocket_URL } from "../../Services/axiosInstance";
+import { Howl } from 'howler';
+import countdownSound  from "../../assets//music/count.mp3"
+
 
 // const socket = io("http://localhost:3000");
 
@@ -16,6 +19,11 @@ const socket = io(WebSocket_URL);
 export default function HeadTailGame() {
   // const { theme } = useTheme();
   // const isGreen = theme === "green";
+
+  const [sound] = useState(() => new Howl({
+  src: [countdownSound],
+  volume: 0.5
+}));
 
   const dispatch = useDispatch();
   const userData = useSelector((state: any) => state.user);
@@ -31,6 +39,16 @@ export default function HeadTailGame() {
   const [user, setUserdata] = useState(userData);
 
   const [isUserBeted, setIsUserBeted] = useState<Boolean>(false);
+  const [userHistory, setUserHistory] = useState<
+    Array<{
+      _id: string;
+      choice: string;
+      amount: number;
+      result: string;
+      payout: number;
+      createdAt: string;
+    }>
+  >([]);
 
   const colors = {
     bg: "bg-black",
@@ -48,6 +66,24 @@ export default function HeadTailGame() {
   // useEffect(() => {
   //   choiceRef.current = choice; // Update the ref whenever the choice changes
   // }, [choice]);
+
+
+
+  
+useEffect(() => {
+  if (timeLeft <= 5 && timeLeft > 0) {
+    sound.stop();
+    sound.play();
+  }
+
+  if (timeLeft === 0) {
+    sound.stop();
+  }
+
+  return () => {
+    sound.stop();
+  };
+}, [timeLeft, sound]);
 
   useEffect(() => {
     socket.on("currentRound", ({ roundId, startedAt }) => {
@@ -117,6 +153,35 @@ export default function HeadTailGame() {
 
             return updatedUser;
           });
+
+          // console.log("user won ");
+
+          setUserHistory((prev) => [
+            {
+              _id: `${Date.now()}`, // or use a better unique id if available
+              choice,
+              amount,
+              result,
+              payout: result === "win" ? amount : 0,
+              createdAt: new Date().toISOString(),
+            },
+
+            ...prev,
+          ]);
+        } else {
+          // console.log("user loose");
+
+          setUserHistory((prev) => [
+            {
+              _id: `${Date.now()}`,
+              choice,
+              amount,
+              result,
+              payout: 0,
+              createdAt: new Date().toISOString(),
+            },
+            ...prev,
+          ]);
         }
       }
     );
@@ -263,6 +328,27 @@ export default function HeadTailGame() {
   //   setBetAmount(10); // Reset bet amount after placing the bet
   // };
 
+  useEffect(() => {
+    if (userData?._id) {
+      fetchUserHistory();
+      socket.emit("registerUser", "headTailGame");
+    }
+  }, [userData?._id]);
+
+  const fetchUserHistory = async () => {
+    try {
+      const token = userData.token;
+      if (!token) {
+        toast.error("Token not found");
+      }
+      const response = await userService.getUserBetHistoryHeadTail(token);
+      setUserHistory(response.data);
+    } catch (error) {
+      console.error("Failed to fetch user history:", error);
+      toast.error("Failed to load history");
+    }
+  };
+
   const placeBet = () => {
     const amount = Number(betAmount);
     if (!choice) return setStatus("Select Head or Tail first");
@@ -290,7 +376,7 @@ export default function HeadTailGame() {
     });
 
     setIsUserBeted(true); // ✅ Set this AFTER placing the bet
-    setBetAmount(10); // Reset bet amount after placing the bet
+    // setBetAmount(10); // Reset bet amount after placing the bet
   };
 
   const getUserBalance = async () => {
@@ -452,6 +538,60 @@ export default function HeadTailGame() {
               </div>
             ) : (
               <p className="text-gray-400 text-center py-4">No results yet</p>
+            )}
+          </div>
+
+          {/* User Bet History */}
+          <div className={`p-4 rounded-lg ${colors.card} mt-4`}>
+            {/* <div className="flex justify-between items-center mb-3">
+              <h2 className="text-lg font-bold">YOUR BET HISTORY</h2>
+              <TfiReload
+                onClick={fetchUserHistory}
+                className="text-yellow-400 cursor-pointer"
+                size={18}
+              />
+            </div> */}
+
+            {userHistory.length > 0 ? (
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {userHistory.map((bet) => (
+                  <div
+                    key={bet._id}
+                    className={`p-3 rounded-lg flex justify-between items-center ${
+                      bet.result === "win" ? "bg-green-900/30" : "bg-red-900/30"
+                    }`}
+                  >
+                    <div>
+                      <p className="font-medium">
+                        {bet.choice.toUpperCase()} - ₹{bet.amount}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {new Date(bet.createdAt).toLocaleTimeString()}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p
+                        className={
+                          bet.result === "win"
+                            ? "text-green-400"
+                            : "text-red-400"
+                        }
+                      >
+                        {bet.result.toUpperCase()}
+                      </p>
+                      <p className="text-sm">
+                        {bet.result === "win"
+                          ? `+₹${bet.payout}`
+                          : `-₹${bet.amount}`}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-400 text-center py-4">
+                No bet history found
+              </p>
             )}
           </div>
         </div>

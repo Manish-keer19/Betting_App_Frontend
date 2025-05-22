@@ -308,7 +308,7 @@ export const WithdrawForm = ({
   isGreenTheme,
 }: WithdrawFormProps) => {
   const user = useSelector((state: any) => state.user);
-  const [amount, setAmount] = useState<number>(500);
+  const [amount, setAmount] = useState<number>(200);
   const [withdrawalMethod, setWithdrawalMethod] = useState<"bank" | "upi">(
     "bank"
   );
@@ -331,8 +331,8 @@ export const WithdrawForm = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (amount < 500) {
-      toast.error("Minimum withdrawal amount is 500");
+    if (amount < 200) {
+      toast.error("Minimum withdrawal amount is 200");
       return;
     }
 
@@ -392,8 +392,8 @@ export const WithdrawForm = ({
   };
 
   const validateForm = (): boolean => {
-    if (amount < 500) {
-      toast.error("Minimum withdrawal amount is ₹500");
+    if (amount < 200) {
+      toast.error("Minimum withdrawal amount is ₹200");
       return false;
     }
 
@@ -554,7 +554,7 @@ export const WithdrawForm = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-300">
-              Amount (Minimum ₹500)
+              Amount (Minimum ₹200)
             </label>
             <input
               type="tel" // Changed to number type for better mobile experience
@@ -562,7 +562,7 @@ export const WithdrawForm = ({
               onChange={(e) =>
                 setAmount(e.target.value ? Number(e.target.value) : 0)
               }
-              className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-200"
             />
             <p className="text-xs text-gray-400">
               Available: ₹{currentBalance.toLocaleString()}
@@ -625,7 +625,7 @@ export const WithdrawForm = ({
                       accountNumber: e.target.value,
                     })
                   }
-                  className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-200"
                 />
               </div>
               <div>
@@ -641,7 +641,7 @@ export const WithdrawForm = ({
                       accountHolderName: e.target.value,
                     })
                   }
-                  className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-200"
                 />
               </div>
               <div>
@@ -654,7 +654,7 @@ export const WithdrawForm = ({
                   onChange={(e) =>
                     setBankDetails({ ...bankDetails, bankName: e.target.value })
                   }
-                  className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-200"
                 />
               </div>
               <div>
@@ -667,7 +667,7 @@ export const WithdrawForm = ({
                   onChange={(e) =>
                     setBankDetails({ ...bankDetails, ifscCode: e.target.value })
                   }
-                  className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-200"
                 />
               </div>
             </div>
@@ -683,7 +683,7 @@ export const WithdrawForm = ({
                 onChange={(e) =>
                   setBankDetails({ ...bankDetails, upiId: e.target.value })
                 }
-                className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full p-2 rounded border bg-gray-800 border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-200"
               />
             </div>
           )}

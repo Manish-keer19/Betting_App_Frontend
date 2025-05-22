@@ -18,7 +18,7 @@ type Deposit = {
 };
 
 export const DepositForm = ({ theme }: DepositFormProps) => {
-  const [amount, setAmount] = useState<number>(300);
+  const [amount, setAmount] = useState<number>(200);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const [transactionId, setTransactionId] = useState<string>("");
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
@@ -192,7 +192,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                     }`}
                   >
                     <svg
-                      xmlns="http://www.w3.org/3000/svg"
+                      xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5 text-white"
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -207,12 +207,12 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                   <div className="ml-3">
                     <h3
                       className={`text-sm font-medium ${
-                        isGreenTheme ? "text-green-300" : "text-gray-300"
+                        isGreenTheme ? "text-green-200" : "text-gray-200"
                       }`}
                     >
                       Deposit Bonus & Processing Time
                     </h3>
-                    <div className="mt-1 text-sm text-gray-300">
+                    <div className="mt-1 text-sm text-gray-200">
                       <p>• Get 5% bonus on all deposits</p>
                       <p>
                         • Deposits take 15-30 minutes to reflect in your wallet
@@ -223,8 +223,8 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Amount (Minimum 300)
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                    Amount (Minimum 200)
                   </label>
                   <input
                     type="tel"
@@ -238,8 +238,8 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
 
                 <button
                   onClick={() => {
-                    if (amount < 300) {
-                      toast.error("Minimum deposit amount is 300");
+                    if (amount < 200) {
+                      toast.error("Minimum deposit amount is 200");
                       return;
                     }
                     setShowPaymentDetails(true);
@@ -269,7 +269,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                 </div>
                 <div className="text-center space-y-1">
                   <p className="text-lg font-medium text-white">₹{amount}</p>
-                  {/* <p className="text-gray-300">UPI ID: your-upi-id@oksbi</p> */}
+                  {/* <p className="text-gray-200">UPI ID: your-upi-id@oksbi</p> */}
                   <p className="text-sm text-gray-400 mt-2">
                     Please complete the payment and submit the screenshot below
                   </p>
@@ -278,7 +278,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
                     Transaction ID
                   </label>
                   <input
@@ -291,7 +291,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-200 mb-2">
                     Payment Screenshot (Max 2MB)
                   </label>
                   <div className="flex items-center justify-center w-full">
@@ -302,7 +302,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/3000/svg"
+                          xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
                             strokeLinecap="round"
@@ -341,7 +341,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                         }`}
                       >
                         <svg
-                          xmlns="http://www.w3.org/3000/svg"
+                          xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5"
                           viewBox="0 0 20 20"
                           fill="currentColor"
@@ -381,7 +381,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                       <span className="flex items-center justify-center">
                         <svg
                           className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                          xmlns="http://www.w3.org/3000/svg"
+                          xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
                         >
@@ -445,7 +445,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                           {deposit.status.toUpperCase()}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-300 mb-1">
+                      <p className="text-sm text-gray-200 mb-1">
                         <span className="font-medium">Transaction ID:</span>{" "}
                         {deposit.transactionId}
                       </p>
