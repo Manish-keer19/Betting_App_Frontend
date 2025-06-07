@@ -1,5 +1,5 @@
 import { useState, useRef, ChangeEvent, useEffect } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { QRCodeSVG } from "qrcode.react";
 import { useSelector } from "react-redux";
 import { userService } from "../../Services/userService";
@@ -18,7 +18,7 @@ type Deposit = {
 };
 
 export const DepositForm = ({ theme }: DepositFormProps) => {
-  const [amount, setAmount] = useState<number>(200);
+  const [amount, setAmount] = useState<number>(100);
   const [showPaymentDetails, setShowPaymentDetails] = useState(false);
   const [transactionId, setTransactionId] = useState<string>("");
   const [paymentScreenshot, setPaymentScreenshot] = useState<File | null>(null);
@@ -46,6 +46,34 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
         setPreviewImage(reader.result as string);
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePayment = () => {
+    if (!amount) return alert("Please enter amount");
+
+    const upiUrl = `upi://pay?pa=ameyalaadd@ibl&pn=BetABack&am=${amount}&cu=INR`;
+
+    // Check if device is Android
+    // const isWeb = /Android/i.test(navigator.userAgent);
+    // const isWeb = /Web/i.test(navigator.userAgent);
+
+    // if (isWeb) {
+    //   // Redirect to UPI payment intent
+    //   toast.error("UPI payments are only supported only on mobile devices.");
+    // } else {
+    //   window.location.href = upiUrl;
+    // }
+
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+      window.location.href = upiUrl;
+    } else if (isIOS) {
+      toast.error("UPI payments are not supported on iOS devices via browser.");
+    } else {
+      toast.error("UPI payments are only supported on Android mobile devices.");
     }
   };
 
@@ -151,25 +179,23 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
     <div className="max-w-md mx-auto bg-gray-900 bg-opacity-50 rounded-lg p-6 shadow-lg">
       <div className="flex border-b border-gray-700 mb-6">
         <button
-          className={`py-2 px-4 font-medium ${
-            activeTab === "deposit"
+          className={`py-2 px-4 font-medium ${activeTab === "deposit"
               ? isGreenTheme
                 ? "text-green-400 border-b-2 border-green-400"
                 : "text-white border-b-2 border-white"
               : "text-gray-400"
-          }`}
+            }`}
           onClick={() => setActiveTab("deposit")}
         >
           Deposit Money
         </button>
         <button
-          className={`py-2 px-4 font-medium ${
-            activeTab === "history"
+          className={`py-2 px-4 font-medium ${activeTab === "history"
               ? isGreenTheme
                 ? "text-green-400 border-b-2 border-green-400"
                 : "text-white border-b-2 border-white"
               : "text-gray-400"
-          }`}
+            }`}
           onClick={() => setActiveTab("history")}
         >
           History
@@ -181,15 +207,13 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
           {!showPaymentDetails ? (
             <>
               <div
-                className={`p-4 mb-4 rounded-lg ${
-                  isGreenTheme ? "bg-green-900 bg-opacity-30" : "bg-gray-800"
-                }`}
+                className={`p-4 mb-4 rounded-lg ${isGreenTheme ? "bg-green-900 bg-opacity-30" : "bg-gray-800"
+                  }`}
               >
                 <div className="flex items-start">
                   <div
-                    className={`flex-shrink-0 p-1 rounded-full ${
-                      isGreenTheme ? "bg-green-500" : "bg-gray-600"
-                    }`}
+                    className={`flex-shrink-0 p-1 rounded-full ${isGreenTheme ? "bg-green-500" : "bg-gray-600"
+                      }`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -206,13 +230,12 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                   </div>
                   <div className="ml-3">
                     <h3
-                      className={`text-sm font-medium ${
-                        isGreenTheme ? "text-green-200" : "text-gray-200"
-                      }`}
+                      className={`text-sm font-medium ${isGreenTheme ? "text-green-100" : "text-gray-100"
+                        }`}
                     >
                       Deposit Bonus & Processing Time
                     </h3>
-                    <div className="mt-1 text-sm text-gray-200">
+                    <div className="mt-1 text-sm text-gray-100">
                       <p>• Get 5% bonus on all deposits</p>
                       <p>
                         • Deposits take 15-30 minutes to reflect in your wallet
@@ -223,8 +246,8 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
               </div>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
-                    Amount (Minimum 200)
+                  <label className="block text-sm font-medium text-gray-100 mb-2">
+                    Amount (Minimum 100)
                   </label>
                   <input
                     type="tel"
@@ -238,17 +261,16 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
 
                 <button
                   onClick={() => {
-                    if (amount < 200) {
-                      toast.error("Minimum deposit amount is 200");
+                    if (amount < 100) {
+                      toast.error("Minimum deposit amount is 100");
                       return;
                     }
                     setShowPaymentDetails(true);
                   }}
-                  className={`w-full py-3 rounded-lg font-bold transition-colors ${
-                    isGreenTheme
+                  className={`w-full py-3 rounded-lg font-bold transition-colors ${isGreenTheme
                       ? "bg-green-600 hover:bg-green-700 text-white"
                       : "bg-gray-700 hover:bg-gray-600 text-white"
-                  }`}
+                    }`}
                 >
                   Proceed to Pay ₹{amount}
                 </button>
@@ -262,23 +284,32 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                 </h3>
                 <div className="p-4 bg-white rounded-lg">
                   <QRCodeSVG
-                    // value={`upi://pay?pa=your-upi-id@oksbi&pn=YourAppName&am=${amount}&cu=INR`}
-                    value={`upi://pay?pa=ameyalaadd@ibl&pn=YourAppName&am=${amount}&cu=INR`}
+
+                    value={`upi://pay?pa=manishkeer530@oksbi&pn=Manish'sBetApp&am=${amount}&cu=INR`}
                     size={180}
                   />
                 </div>
                 <div className="text-center space-y-1">
                   <p className="text-lg font-medium text-white">₹{amount}</p>
-                  {/* <p className="text-gray-200">UPI ID: your-upi-id@oksbi</p> */}
+                  {/* <p className="text-gray-100">UPI ID: your-upi-id@oksbi</p> */}
                   <p className="text-sm text-gray-400 mt-2">
                     Please complete the payment and submit the screenshot below
                   </p>
                 </div>
+                <button
+                  onClick={handlePayment}
+                  className={`w-full py-3 rounded-lg font-bold text-white text-lg transition-all duration-100 ${isGreenTheme
+                      ? "bg-green-600 hover:bg-green-700 shadow-md hover:shadow-lg"
+                      : "bg-gray-700 hover:bg-gray-600 shadow-md hover:shadow-lg"
+                    }`}
+                >
+                  💰 Pay via UPI
+                </button>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                  <label className="block text-sm font-medium text-gray-100 mb-2">
                     Transaction ID
                   </label>
                   <input
@@ -291,7 +322,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-200 mb-2">
+                  <label className="block text-sm font-medium text-gray-100 mb-2">
                     Payment Screenshot (Max 2MB)
                   </label>
                   <div className="flex items-center justify-center w-full">
@@ -334,11 +365,10 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                       />
                       <button
                         onClick={removeImage}
-                        className={`absolute top-2 right-2 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
-                          isGreenTheme
+                        className={`absolute top-2 right-2 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${isGreenTheme
                             ? "bg-green-600 hover:bg-green-700"
                             : "bg-gray-700 hover:bg-gray-600"
-                        }`}
+                          }`}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -360,22 +390,20 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                 <div className="flex space-x-3">
                   <button
                     onClick={() => setShowPaymentDetails(false)}
-                    className={`flex-1 py-2 rounded-lg font-medium ${
-                      isGreenTheme
+                    className={`flex-1 py-2 rounded-lg font-medium ${isGreenTheme
                         ? "bg-gray-700 hover:bg-gray-600 text-white"
                         : "bg-gray-700 hover:bg-gray-600 text-white"
-                    }`}
+                      }`}
                   >
                     Back
                   </button>
                   <button
                     onClick={handleSubmitDeposit}
                     disabled={isSubmitting}
-                    className={`flex-1 py-2 rounded-lg font-bold ${
-                      isGreenTheme
+                    className={`flex-1 py-2 rounded-lg font-bold ${isGreenTheme
                         ? "bg-green-600 hover:bg-green-700 text-white"
                         : "bg-gray-700 hover:bg-gray-600 text-white"
-                    } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+                      } ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
                     {isSubmitting ? (
                       <span className="flex items-center justify-center">
@@ -425,11 +453,10 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
               {deposits.map((deposit) => (
                 <div
                   key={deposit._id}
-                  className={`p-4 rounded-lg ${
-                    isGreenTheme
+                  className={`p-4 rounded-lg ${isGreenTheme
                       ? "bg-green-900 bg-opacity-30"
                       : "bg-gray-800 bg-opacity-50"
-                  }`}
+                    }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex-1">
@@ -445,7 +472,7 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
                           {deposit.status.toUpperCase()}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-200 mb-1">
+                      <p className="text-sm text-gray-100 mb-1">
                         <span className="font-medium">Transaction ID:</span>{" "}
                         {deposit.transactionId}
                       </p>
@@ -478,3 +505,4 @@ export const DepositForm = ({ theme }: DepositFormProps) => {
     </div>
   );
 };
+

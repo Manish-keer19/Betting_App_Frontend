@@ -1,4 +1,4 @@
-import toast from "react-hot-toast";
+import { toast } from "sonner"
 import axiosInstance from "./axiosInstance";
 
 class AdminService {
@@ -10,7 +10,7 @@ class AdminService {
         },
       });
 
-      console.log("Pending Withdraws:", res.data);
+      // console.log("Pending Withdraws:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -28,7 +28,7 @@ class AdminService {
         },
       });
 
-      console.log("Pending deposits:", res.data);
+      // console.log("Pending deposits:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -47,7 +47,7 @@ class AdminService {
         },
       });
 
-      console.log("Deposit verification response:", res.data);
+      // console.log("Deposit verification response:", res.data);
       if (res.data.success) {
         toast.success("Deposit verified successfully");
         return res.data;
@@ -67,7 +67,7 @@ class AdminService {
         },
       });
 
-      console.log("Withdraw verification response:", res.data);
+      // console.log("Withdraw verification response:", res.data);
       if (res.data.success) {
         toast.success("Withdraw verified successfully");
         return res.data;
@@ -87,7 +87,7 @@ class AdminService {
         },
       });
 
-      console.log("Approved deposits:", res.data);
+      // console.log("Approved deposits:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -105,7 +105,7 @@ class AdminService {
         },
       });
 
-      console.log("Approved withdraws:", res.data);
+      // console.log("Approved withdraws:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -123,7 +123,7 @@ class AdminService {
         },
       });
 
-      console.log("Deposit history:", res.data);
+      // console.log("Deposit history:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -141,7 +141,7 @@ class AdminService {
         },
       });
 
-      console.log("Withdraw history:", res.data);
+      // console.log("Withdraw history:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -160,7 +160,7 @@ class AdminService {
         },
       });
 
-      console.log("Deposit rejection response:", res.data);
+      // console.log("Deposit rejection response:", res.data);
       if (res.data.success) {
         toast.success("Deposit rejected successfully");
         return res.data;
@@ -180,7 +180,7 @@ class AdminService {
         },
       });
 
-      console.log("Withdraw rejection response:", res.data);
+      // console.log("Withdraw rejection response:", res.data);
       if (res.data.success) {
         toast.success("Withdraw rejected successfully");
         return res.data;
@@ -191,6 +191,88 @@ class AdminService {
       console.error("Error rejecting withdraw:", error);
     }
   }
+
+
+
+  async getAllUsers(token: any) {
+    try {
+      const res = await axiosInstance.get("/admin/getAllUsers", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // console.log("All users:", res.data);
+      if (res.data.success) {
+        return res.data;
+      }
+      toast.error("Failed to fetch all users");
+    } catch (error) {
+      toast.error("Failed to fetch all users");
+      console.error("Error fetching all users:", error);
+    }
+  }
+
+
+  async getDashboardStats(token: any) {
+    try {
+      const res = await axiosInstance.get("/admin/getDashboardStats", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // console.log("Dashboard stats:", res.data);
+      if (res.data.success) {
+        return res.data;
+      }
+      toast.error("Failed to fetch dashboard stats");
+    } catch (error) {
+      toast.error("Failed to fetch dashboard stats");
+      console.error("Error fetching dashboard stats:", error);
+    }
+  }
+
+
+  async searchUsers(query: string, token: any) {
+    try {
+      const res = await axiosInstance.get(`/admin/searchUsers?query=${query}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // console.log("Search results:", res.data);
+      if (res.data.success) {
+        return res.data;
+      }
+      toast.error("Failed to search users");
+    } catch (error) {
+      toast.error("Failed to search users");
+      console.error("Error searching users:", error);
+    }
+  }
+
+
+  async getUserDetails(userId: string, token: any) {
+    try {
+      const res = await axiosInstance.get(`/admin/getUserDetails/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // console.log("User details:", res.data);
+      if (res.data.success) {
+        return res.data;
+      }
+      toast.error("Failed to fetch user details");
+    } catch (error) {
+      toast.error("Failed to fetch user details");
+      console.error("Error fetching user details:", error);
+    }
+  }
+
+  
 }
 
 export const adminService = new AdminService();

@@ -9,9 +9,9 @@ class UserService {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Deposits response:", res.data);
+      // console.log("Deposits response:", res.data);
       if (res.data.success) {
-        console.log("Deposits fetched successfully:", res.data);
+        // console.log("Deposits fetched successfully:", res.data);
         return res.data;
       }
     } catch (error) {
@@ -28,9 +28,9 @@ class UserService {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Deposit response:", res.data);
+      // console.log("Deposit response:", res.data);
       if (res.data.success) {
-        console.log("Deposit successful:", res.data);
+        // console.log("Deposit successful:", res.data);
         return res.data;
       }
     } catch (error) {
@@ -40,7 +40,7 @@ class UserService {
   }
 
   async getuserBankDetails(userId: string, token: string) {
-    console.log("Fetching bank details for user:", userId);
+    // console.log("Fetching bank details for user:", userId);
     try {
       const res = await axiosInstance.get(
         `/user/getUserBankDetails/${userId}`,
@@ -50,7 +50,7 @@ class UserService {
           },
         }
       );
-      console.log("Bank details response:", res.data);
+      // console.log("Bank details response:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -72,9 +72,9 @@ class UserService {
           },
         }
       );
-      console.log("Withdraw response:", res.data);
+      // console.log("Withdraw response:", res.data);
       if (res.data.success) {
-        console.log("Withdraw successful:", res.data);
+        // console.log("Withdraw successful:", res.data);
         return res.data;
       }
     } catch (error) {
@@ -93,7 +93,7 @@ class UserService {
           },
         }
       );
-      console.log("Withdraw history response:", res.data);
+      // console.log("Withdraw history response:", res.data);
       if (res.data.success) {
         return res.data;
       } else {
@@ -112,7 +112,7 @@ class UserService {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("User balance response:", res.data);
+      // console.log("User balance response:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -124,7 +124,7 @@ class UserService {
 
   async saveBankDetails(data: any, token: string) {
     try {
-      console.log("Saving bank details in userservice:", data);
+      // console.log("Saving bank details in userservice:", data);
       const res = await axiosInstance.post(
         "/user/save-user-Bank-Details",
         data,
@@ -135,7 +135,7 @@ class UserService {
           },
         }
       );
-      console.log("Bank details response:", res.data);
+      // console.log("Bank details response:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -152,7 +152,7 @@ class UserService {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("Change password response:", res.data);
+      // console.log("Change password response:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -169,7 +169,7 @@ class UserService {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("User bonus response:", res.data);
+      // console.log("User bonus response:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -186,7 +186,7 @@ class UserService {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("User bet history response:", res.data);
+      // console.log("User bet history response:", res.data);
       if (res.data.success) {
         return res.data;
       }
@@ -204,7 +204,7 @@ class UserService {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("User bet history response:", res.data);
+      // console.log("User bet history response:", res.data);
       if (res.data.success) {
         return res.data;
       }

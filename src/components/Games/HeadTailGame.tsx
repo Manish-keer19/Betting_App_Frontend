@@ -1,16 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import io from "socket.io-client";
 import { TfiReload } from "react-icons/tfi";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 // import { useTheme } from "../../utils/ThemeContext";
 import { userService } from "../../Services/userService";
 import { setUser } from "../../features/userSlice";
 import Navbar from "../Navbar";
 import { WebSocket_URL } from "../../Services/axiosInstance";
-import { Howl } from 'howler';
-import countdownSound  from "../../assets//music/count.mp3"
-
+import { Howl } from "howler";
+import countdownSound from "../../assets//music/count.mp3";
 
 // const socket = io("http://localhost:3000");
 
@@ -20,10 +19,13 @@ export default function HeadTailGame() {
   // const { theme } = useTheme();
   // const isGreen = theme === "green";
 
-  const [sound] = useState(() => new Howl({
-  src: [countdownSound],
-  volume: 0.5
-}));
+  const [sound] = useState(
+    () =>
+      new Howl({
+        src: [countdownSound],
+        volume: 0.5,
+      })
+  );
 
   const dispatch = useDispatch();
   const userData = useSelector((state: any) => state.user);
@@ -50,6 +52,14 @@ export default function HeadTailGame() {
     }>
   >([]);
 
+
+
+  const timerIntervalRef = useRef<ReturnType<typeof setInterval> | undefined>(
+    undefined
+  );
+  const serverTimeOffsetRef = useRef(0);
+  const lastSyncRef = useRef(0);
+
   const colors = {
     bg: "bg-black",
     card: "bg-gray-900",
@@ -67,29 +77,30 @@ export default function HeadTailGame() {
   //   choiceRef.current = choice; // Update the ref whenever the choice changes
   // }, [choice]);
 
+  useEffect(() => {
+    if (timeLeft <= 5 && timeLeft > 0) {
+      sound.stop();
+      sound.play();
+    }
 
+    if (timeLeft === 0) {
+      sound.stop();
+    }
 
-  
-useEffect(() => {
-  if (timeLeft <= 5 && timeLeft > 0) {
-    sound.stop();
-    sound.play();
-  }
-
-  if (timeLeft === 0) {
-    sound.stop();
-  }
-
-  return () => {
-    sound.stop();
-  };
-}, [timeLeft, sound]);
+    return () => {
+      sound.stop();
+    };
+  }, [timeLeft, sound]);
 
   useEffect(() => {
-    socket.on("currentRound", ({ roundId, startedAt }) => {
+    console.log("Connecting to socket...");
+    socket.connect();
+    socket.on("currentRound", ({ roundId, startedAt, roundHistory }) => {
       setIsUserBeted(false); // Reset user bet status for the new round
       setRoundId(roundId);
       startTimer(startedAt);
+      setResultHistory(roundHistory || []);
+      setStatus("Current round started! Place your bet!");
     });
 
     socket.on("joinedRound", ({ roundId }) => {
@@ -98,19 +109,17 @@ useEffect(() => {
 
     // socket.on("roundResult", ({ roundId, result,message }) => {
 
-    //      console.log("Received roundResult:", roundId, result, message);
-
     //   setStatus(`Round ${roundId} Winner: ${result}`);
     //   setChoice(null);
     //   setBetAmount(10);
     //   setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
-    //   console.log("Round Result:", message);
+
     // });
 
     // socket.on("roundResult", ({ roundId, result, message }) => {
-    //   console.log("Received round result:", roundId, result, message);
+
     //   setStatus(`Round ${roundId} Winner: ${result}`);
-    //   console.log("choice", choice, "result", result);
+
     //   if (choice === result) {
     //     toast.success(`You won! Result: ${result}`, { duration: 10000 });
     //   } else {
@@ -123,8 +132,8 @@ useEffect(() => {
 
     socket.on(
       "roundOutcome",
-      ({ result, choice, winningSide, amount, message }) => {
-        console.log("Round outcome:", { result, choice, winningSide, amount });
+      ({ result, choice, amount, message }) => {
+        // console.log("Round outcome:", { result, choice, winningSide, amount });
 
         setStatus(message); // show status message
 
@@ -186,33 +195,12 @@ useEffect(() => {
       }
     );
 
-    // socket.on("roundResult", ({ roundId, result }) => {
-    //   // console.log("choiceRef", choiceRef.current, "result", result);
-
-    //   setIsUserBeted(false); // Reset user bet status for the next round
-    //   setStatus(`Round ${roundId} Winner: ${result}`);
-    //   const currentChoice = choiceRef.current; // Access the latest choice from the ref
-    //   console.log("choice", currentChoice, "result", result);
-
-    //   if (currentChoice === null) {
-    //     toast.error("You didn't place a bet this round", { duration: 10000 });
-    //     return;
-    //   }
-    //   if (currentChoice === result) {
-    //     toast.success(`You won! Result: ${result}`, { duration: 10000 });
-    //   } else {
-    //     toast.error(`You lost! Result: ${result}`, { duration: 10000 });
-    //   }
-
-    //   setChoice(null);
-    //   setBetAmount(10);
-    //   // setResultHistory((prev) => [...prev, { roundId, result }].slice(-5));
-    // });
-
     socket.on("newRound", ({ roundId, startedAt }) => {
       setRoundId(roundId);
       startTimer(startedAt);
       setStatus("New round started! Place your bet!");
+      setIsUserBeted(false); // Reset user bet status for the new round
+      setChoice(null); // Reset choice for the new round
     });
 
     socket.on("betPlaced", ({ amount, choice }) => {
@@ -237,7 +225,7 @@ useEffect(() => {
     });
 
     socket.on("roundResultToAll", ({ room, roundId, result }) => {
-      console.log(`Room: ${room} → Round Result:`, roundId, result);
+      // console.log(`Room: ${room} → Round Result:`, roundId, result);
 
       setResultHistory((prev) =>
         [...prev, { room, roundId, result }].slice(-5)
@@ -245,11 +233,13 @@ useEffect(() => {
     });
 
     socket.on("error", (message) => {
+      // console.log("Socket error:", message);
+      // toast.error(`Error: ${message}`);
       setStatus(`Error: ${message}`);
     });
 
     // socket.on("wonMessage", ({ message, amount }: any) => {
-    //   console.log("wonMessage", message, amount);
+    // console.log("wonMessage", message, amount);
 
     //   setUserdata((prev: any) => ({
     //     ...prev,
@@ -264,7 +254,7 @@ useEffect(() => {
     // });
 
     // socket.on("wonMessage", ({ message, amount }: any) => {
-    //   console.log("wonMessage", message, amount);
+    // console.log("wonMessage", message, amount);
 
     //   setUserdata((prev: any) => {
     //     const newBalance = prev.balance + amount;
@@ -286,14 +276,73 @@ useEffect(() => {
     };
   }, []);
 
+  // Replace your startTimer function with this:
   const startTimer = (startedAt: string) => {
-    const end = new Date(startedAt).getTime() + 30000;
-    const interval = setInterval(() => {
+    // Clear any existing interval
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+    }
+
+    // Calculate initial time remaining with server sync
+    const calculateRemaining = () => {
+      const serverNow = Date.now() + serverTimeOffsetRef.current;
+      const roundEnd = new Date(startedAt).getTime() + 30000;
+      return Math.max(0, Math.floor((roundEnd - serverNow) / 1000));
+    };
+
+    // Initial sync with server
+    const syncWithServer = () => {
       const now = Date.now();
-      const left = Math.max(0, Math.floor((end - now) / 1000));
-      setTimeLeft(left);
-      if (left === 0) clearInterval(interval);
+      socket.emit("getServerTime", {}, (serverTime: number) => {
+        const roundTripTime = Date.now() - now;
+        serverTimeOffsetRef.current =
+          serverTime - Date.now() + roundTripTime / 2;
+        lastSyncRef.current = Date.now();
+
+        // Update time immediately after sync
+        setTimeLeft(calculateRemaining());
+      });
+    };
+
+    // First sync
+    syncWithServer();
+
+    // Set up interval with drift correction
+    let expected = Date.now() + 1000;
+    const driftCorrection = (now: number) => {
+      const drift = now - expected;
+      expected += 1000;
+      return Math.max(0, 1000 - drift);
+    };
+
+    timerIntervalRef.current = setInterval(() => {
+      const now = Date.now();
+
+      // Re-sync every 30 seconds or if drift is significant
+      if (
+        now - lastSyncRef.current > 30000 ||
+        Math.abs(serverTimeOffsetRef.current) > 1000
+      ) {
+        syncWithServer();
+      }
+
+      setTimeLeft(calculateRemaining());
+
+      // Correct for drift
+      const nextTick = driftCorrection(now);
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = setTimeout(() => {
+          startTimer(startedAt); // Restart with fresh calculation
+        }, nextTick);
+      }
     }, 1000);
+
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+      }
+    };
   };
 
   const handleChoice = (c: "head" | "tail") => setChoice(c);
@@ -410,7 +459,7 @@ useEffect(() => {
   return (
     <>
       <Navbar />
-      <div className={`min-h-screen ${colors.bg} ${colors.text} p-4 pt-[7vh]`}>
+      <div className={`min-h-screen ${colors.bg} ${colors.text} p-4 mt-24 `}>
         <div className="max-w-md mx-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
@@ -478,17 +527,23 @@ useEffect(() => {
             <h2 className="text-lg font-bold mb-3">CHOOSE YOUR BET</h2>
             <div className="flex gap-3 mb-4">
               <button
+                disabled={!roundId || timeLeft <= 5}
                 onClick={() => handleChoice("head")}
                 className={`flex-1 py-3 rounded-lg font-bold transition-all ${
                   choice === "head" ? colors.active : colors.button
-                }`}
+                } ${
+                  !roundId || (timeLeft <= 5 && "opacity-50 cursor-not-allowed")
+                } `}
               >
                 HEAD
               </button>
               <button
+                disabled={!roundId || timeLeft <= 5}
                 onClick={() => handleChoice("tail")}
                 className={`flex-1 py-3 rounded-lg font-bold transition-all ${
                   choice === "tail" ? colors.active : colors.button
+                } ${
+                  !roundId || (timeLeft <= 5 && "opacity-50 cursor-not-allowed")
                 }`}
               >
                 TAIL
@@ -507,9 +562,11 @@ useEffect(() => {
               />
               <button
                 onClick={placeBet}
-                disabled={!choice || !betAmount}
+                disabled={!choice || !betAmount || timeLeft <= 5 || !roundId}
                 className={`w-full py-3 rounded-lg font-bold bg-yellow-600 hover:bg-yellow-500 transition-all ${
                   (!choice || !betAmount) && "opacity-50 cursor-not-allowed"
+                }  ${
+                  !roundId || (timeLeft <= 5 && "opacity-50 cursor-not-allowed")
                 }`}
               >
                 PLACE BET
@@ -599,3 +656,7 @@ useEffect(() => {
     </>
   );
 }
+
+
+
+

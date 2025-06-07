@@ -22,4 +22,5 @@ export type UserData = {
   DateOfBirth?: string;
   bonusAmount?: number;
   bonusPlayedAmount?: number;
+  phoneNumber?: string;
 };

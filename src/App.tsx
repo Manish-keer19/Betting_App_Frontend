@@ -6,7 +6,7 @@ import Signup from "./components/Signup";
 import { Profile } from "./components/Profile";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
-import { Toaster } from "react-hot-toast";
+// import { Toaster } from "react-hot-toast";
 import AdminDashboard from "./Admin/AdminDashboard";
 import HeadTailGame from "./components/Games/HeadTailGame";
 import NotFound from "./components/NotFound";
@@ -16,6 +16,9 @@ import ResetPassword from "./components/Profile/ResetPassword";
 import WheelGame from "./components/Games/WheelGame/WheelGame";
 import Navbar from "./components/Navbar";
 import ForexTradingApp from "./components/Games/ForexTrading/ForexTradingApp";
+
+import { Toaster } from "sonner";
+import ColorGame from "./components/Games/ColorTrading/ColorGame";
 // import {ForexTradingApp} from "./components/Games/ForexTrading/ForexTradingApp";
 function App() {
   const route = createBrowserRouter([
@@ -44,7 +47,8 @@ function App() {
       path: "/head-tail",
       element: <HeadTailGame />,
     },
-   
+    
+
     {
       path: "/games",
       // element: <Allgames  />,
@@ -67,18 +71,37 @@ function App() {
       path: "/wheel-game",
       element: <WheelGame />,
     },
+    {
+      path: "/color-trading",
+      element: <ColorGame    />,
+    },
 
     {
       path: "*",
       element: <NotFound />,
     },
-
-   
   ]);
+
   return (
-    <Provider store={store}>
+    <Provider store={store} >
       <RouterProvider router={route} />
-      <Toaster />
+
+      {/* <Toaster richColors position="top-right" duration={2900}  /> */}
+      {/* <Toaster richColors position="bottom-center" duration={2900} /> */}
+      <Toaster
+    
+        richColors
+        position="top-center" // or "bottom-center" for better mobile UX
+        duration={2900}
+        
+        toastOptions={{
+          style: {
+            maxWidth: "90vw", // Responsive width
+            wordWrap: "break-word", // Prevent overflow
+            fontSize: "0.9rem", // Slightly smaller text
+          },
+        }}
+      />
     </Provider>
   );
 }
