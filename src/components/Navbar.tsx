@@ -6,7 +6,7 @@
 // // import logo from "../assets/logo.jpg";
 // // import { useSelector, useDispatch } from "react-redux";
 // // import { clearUser } from "../features/userSlice";
-// // import { FiMenu, FiX } from "react-icons/fi";
+// // import { FiMenu, FiX } from "react-icons/fi"; 
 
 // // const Navbar: React.FC = () => {
 // //   const navigate = useNavigate();

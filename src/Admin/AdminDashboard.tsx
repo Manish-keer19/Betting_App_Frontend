@@ -1521,7 +1521,7 @@ const AdminDashboard = () => {
               <img
                 src={selectedImage}
                 alt="Payment Screenshot"
-                className="w-full h-auto rounded-lg"
+              className="w-full max-h-[80vh] rounded-lg object-contain"
               />
             </div>
           </div>

@@ -85,7 +85,7 @@
 //             {isLoggedIn ? "Logging in..." : "Login"}
 //           </button>
 //         </div>
-        
+
 //         <div className="mt-4 text-center text-gray-400">
 //           <Link to="/reset-password" className="text-green-500 hover:underline">
 //             Forgot Password?
@@ -99,7 +99,7 @@
 //         </div>
 //       </div>
 
-    
+
 //     </div>
 //     </div>
 //   );
@@ -168,9 +168,27 @@ const Login: React.FC = () => {
     return valid;
   };
 
+
+
+
+
+  const handleDummyLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Set dummy credentials
+    setEmail("dummy@gmail.com");
+    setPassword("ms19");
+
+    // Wait a moment to show the credentials in the inputs
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Submit the form
+    await handleLogin(e);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -233,7 +251,7 @@ const Login: React.FC = () => {
         <div className="bg-white/5 backdrop-blur-lg rounded-xl shadow-2xl overflow-hidden border border-white/10">
           {/* Decorative header */}
           <div className={`h-2 ${isGreen ? "bg-green-500" : "bg-zinc-500"}`}></div>
-          
+
           <div className="p-8">
             <div className="flex justify-center mb-6">
               <motion.img
@@ -244,7 +262,7 @@ const Login: React.FC = () => {
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               />
             </div>
-            
+
             <h2 className="text-3xl font-bold text-center mb-2">Welcome Back</h2>
             <p className="text-center mb-8 text-white/70">Sign in to your account</p>
 
@@ -262,7 +280,7 @@ const Login: React.FC = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 {errors.email && (
-                  <motion.p 
+                  <motion.p
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="mt-1 text-sm text-red-400"
@@ -287,7 +305,7 @@ const Login: React.FC = () => {
                   maxLength={10}
                 />
                 {errors.password && (
-                  <motion.p 
+                  <motion.p
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="mt-1 text-sm text-red-400"
@@ -317,6 +335,28 @@ const Login: React.FC = () => {
                 </Link>
               </div>
 
+              {/* <motion.button
+                type="submit"
+                className={`w-full py-3 rounded-lg ${buttonBg} text-white font-semibold tracking-wide transition-all duration-300 flex items-center justify-center`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Signing in...
+                  </>
+                ) : (
+                  "Sign in"
+                )}
+              </motion.button> */}
+
+
+
               <motion.button
                 type="submit"
                 className={`w-full py-3 rounded-lg ${buttonBg} text-white font-semibold tracking-wide transition-all duration-300 flex items-center justify-center`}
@@ -336,6 +376,28 @@ const Login: React.FC = () => {
                   "Sign in"
                 )}
               </motion.button>
+
+              {/* Add this divider */}
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-white/20"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white/5 text-white/70">OR</span>
+                </div>
+              </div>
+
+              {/* Add this dummy login button */}
+              <motion.button
+                onClick={handleDummyLogin}
+                className={`w-full py-3 rounded-lg ${isGreen ? 'bg-green-800/50 hover:bg-green-700/50' : 'bg-zinc-800/50 hover:bg-zinc-700/50'} text-white font-semibold tracking-wide transition-all duration-300 flex items-center justify-center border ${isGreen ? 'border-green-600/50 hover:border-green-500/50' : 'border-zinc-600/50 hover:border-zinc-500/50'}`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                disabled={isLoading}
+              >
+                Login with Dummy Account
+              </motion.button>
+
             </form>
 
             <div className="mt-6 text-center">

@@ -135,7 +135,7 @@
 // //         {/* Featured Games Section */}
 // //         {user && (
 // //           <motion.section
-// //             className="mb-24"
+// //             className="mb-24" 
 // //             initial={{ opacity: 0 }}
 // //             whileInView={{ opacity: 1 }}
 // //             viewport={{ once: true }}
