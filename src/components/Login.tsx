@@ -185,6 +185,19 @@ const Login: React.FC = () => {
     // Submit the form
     await handleLogin(e);
   };
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Set dummy credentials
+    setEmail("ms@gmail.com");
+    setPassword("proplayer");
+
+    // Wait a moment to show the credentials in the inputs
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    // Submit the form
+    await handleLogin(e);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -388,7 +401,7 @@ const Login: React.FC = () => {
               </div>
 
               {/* Add this dummy login button */}
-              <motion.button
+              {/* <motion.button
                 onClick={handleDummyLogin}
                 className={`w-full py-3 rounded-lg ${isGreen ? 'bg-green-800/50 hover:bg-green-700/50' : 'bg-zinc-800/50 hover:bg-zinc-700/50'} text-white font-semibold tracking-wide transition-all duration-300 flex items-center justify-center border ${isGreen ? 'border-green-600/50 hover:border-green-500/50' : 'border-zinc-600/50 hover:border-zinc-500/50'}`}
                 whileHover={{ scale: 1.02 }}
@@ -397,6 +410,52 @@ const Login: React.FC = () => {
               >
                 Login with Dummy Account
               </motion.button>
+
+              <motion.button
+                onClick={handleAdminLogin}
+                className={`w-full py-3 rounded-lg ${isGreen ? 'bg-green-800/50 hover:bg-green-700/50' : 'bg-zinc-800/50 hover:bg-zinc-700/50'} text-white font-semibold tracking-wide transition-all duration-300 flex items-center justify-center border ${isGreen ? 'border-green-600/50 hover:border-green-500/50' : 'border-zinc-600/50 hover:border-zinc-500/50'}`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                disabled={isLoading}
+              >
+                Login with Admin Account
+              </motion.button> */}
+
+              <motion.button
+                onClick={handleAdminLogin}
+                className={`w-full py-3 rounded-lg ${isGreen ? 'bg-green-800/50 hover:bg-green-700/50' : 'bg-purple-800/50 hover:bg-purple-700/50'
+                  } text-white font-semibold tracking-wide transition-all duration-300 flex items-center justify-center gap-3 border ${isGreen ? 'border-green-600/50 hover:border-green-500/50' : 'border-purple-600/50 hover:border-purple-500/50'
+                  }`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                disabled={isLoading}
+              >
+                <div className="p-1 bg-white/20 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                Login with Admin Account
+              </motion.button>
+
+              <motion.button
+                onClick={handleDummyLogin}
+                className={`w-full py-3 rounded-lg ${isGreen ? 'bg-green-800/50 hover:bg-green-700/50' : 'bg-blue-800/50 hover:bg-blue-700/50'
+                  } text-white font-semibold tracking-wide transition-all duration-300 flex items-center justify-center gap-3 border ${isGreen ? 'border-green-600/50 hover:border-green-500/50' : 'border-blue-600/50 hover:border-blue-500/50'
+                  }`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                disabled={isLoading}
+              >
+                <div className="p-1 bg-white/20 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                Login with Dummy Account
+              </motion.button>
+
+
 
             </form>
 
