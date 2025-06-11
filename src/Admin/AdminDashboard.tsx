@@ -12,7 +12,7 @@ import {
 } from "react-feather";
 import { adminService } from "../Services/adminService";
 import Navbar from "../components/Navbar";
-import { toFormData } from "axios";
+
 import { useNavigate } from "react-router-dom";
 
 type BankDetails = {
