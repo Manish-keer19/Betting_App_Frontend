@@ -6,12 +6,14 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
-import { 
-  User as UserIcon, Search, Clock, CreditCard, 
-  BarChart2, Activity,  X, DollarSign,
+import {
+  User as UserIcon, Search, Clock, CreditCard,
+  BarChart2, Activity, X, DollarSign,
 } from "react-feather";
 import { adminService } from "../Services/adminService";
 import Navbar from "../components/Navbar";
+import { toFormData } from "axios";
+import { useNavigate } from "react-router-dom";
 
 type BankDetails = {
   _id: string;
@@ -82,6 +84,13 @@ const AdminDashboard = () => {
   const user = useSelector((state: any) => state.user);
   const token = user?.token || null;
 
+  const navigate = useNavigate();
+
+  if (user.Role !== "ADMIN") {
+    toast.error("Access denied. You are not an admin.");
+    navigate("/")
+  }
+
   // State for all transaction types
   const [pendingDeposits, setPendingDeposits] = useState<Transaction[]>([]);
   const [approvedDeposits, setApprovedDeposits] = useState<Transaction[]>([]);
@@ -124,7 +133,7 @@ const AdminDashboard = () => {
   const fetchAllData = async () => {
     try {
       setIsRefreshing(true);
-      
+
       // Fetch dashboard stats
       if (activeTab === "dashboard") {
         setLoading(prev => ({ ...prev, dashboard: true }));
@@ -282,7 +291,7 @@ const AdminDashboard = () => {
         fetchAllData();
         return;
       }
-      
+
       setLoading(prev => ({ ...prev, users: true }));
       const res = await adminService.searchUsers(searchTerm, token);
       if (res.success) {
@@ -380,7 +389,7 @@ const AdminDashboard = () => {
   return (
     <div className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen pt-20">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
@@ -469,22 +478,20 @@ const AdminDashboard = () => {
         {/* Tabs */}
         <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-700 pb-2 overflow-x-auto">
           <button
-            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${
-              activeTab === "dashboard"
+            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${activeTab === "dashboard"
                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+              }`}
             onClick={() => setActiveTab("dashboard")}
           >
             <BarChart2 size={16} />
             Dashboard
           </button>
           <button
-            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${
-              activeTab === "pending-deposits"
+            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${activeTab === "pending-deposits"
                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+              }`}
             onClick={() => setActiveTab("pending-deposits")}
           >
             <Clock size={16} />
@@ -496,22 +503,20 @@ const AdminDashboard = () => {
             )}
           </button>
           <button
-            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${
-              activeTab === "approved-deposits"
+            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${activeTab === "approved-deposits"
                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+              }`}
             onClick={() => setActiveTab("approved-deposits")}
           >
             <CreditCard size={16} />
             Approved Deposits
           </button>
           <button
-            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${
-              activeTab === "pending-withdrawals"
+            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${activeTab === "pending-withdrawals"
                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+              }`}
             onClick={() => setActiveTab("pending-withdrawals")}
           >
             <Clock size={16} />
@@ -523,22 +528,20 @@ const AdminDashboard = () => {
             )}
           </button>
           <button
-            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${
-              activeTab === "approved-withdrawals"
+            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${activeTab === "approved-withdrawals"
                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+              }`}
             onClick={() => setActiveTab("approved-withdrawals")}
           >
             <DollarSign size={16} />
             Approved Withdrawals
           </button>
           <button
-            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${
-              activeTab === "users"
+            className={`px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-colors flex items-center gap-2 ${activeTab === "users"
                 ? "bg-indigo-600 text-white shadow-lg shadow-indigo-500/20"
                 : "bg-gray-800 text-gray-300 hover:bg-gray-700"
-            }`}
+              }`}
             onClick={() => setActiveTab("users")}
           >
             <UserIcon size={16} />
@@ -609,7 +612,7 @@ const AdminDashboard = () => {
           ) : (isDashboardTab ? (
             <div className="p-6">
               <h2 className="text-xl font-bold text-white mb-6">Recent Activity</h2>
-              
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Deposits */}
                 <div className="bg-gray-750 rounded-lg p-4 border border-gray-700">
@@ -708,7 +711,7 @@ const AdminDashboard = () => {
                           Date
                         </th>
                         {/* {isPendingTab && !isWithdrawalTab && ( */}
-                        { !isWithdrawalTab && (
+                        {!isWithdrawalTab && (
                           <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                             Screenshot
                           </th>
@@ -763,11 +766,10 @@ const AdminDashboard = () => {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span
-                                className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                  item.isActive
+                                className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${item.isActive
                                     ? "bg-green-100 text-green-800"
                                     : "bg-red-100 text-red-800"
-                                }`}
+                                  }`}
                               >
                                 {item.isActive ? "Active" : "Inactive"}
                               </span>
@@ -808,9 +810,9 @@ const AdminDashboard = () => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                               {formatDate(item.createdAt)}
                             </td>
-                            {  !isWithdrawalTab &&(
+                            {!isWithdrawalTab && (
                               <td className="px-6 py-4 whitespace-nowrap">
-                              
+
                                 <button
                                   onClick={() => openImageModal(item.paymentScreenshot)}
                                   className="text-indigo-500 hover:text-indigo-400 text-sm"
@@ -896,7 +898,7 @@ const AdminDashboard = () => {
               <img
                 src={selectedImage}
                 alt="Payment Screenshot"
-              className="w-full max-h-[80vh] rounded-lg object-contain"
+                className="w-full max-h-[80vh] rounded-lg object-contain"
               />
             </div>
           </div>
@@ -941,8 +943,8 @@ const AdminDashboard = () => {
       {/* User Details Modal */}
       {selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4 overflow-auto">
-          
-                  <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[75vh] overflow-auto">
+
+          <div className="bg-gray-800 rounded-lg max-w-4xl w-full max-h-[75vh] overflow-auto">
             <div className="flex justify-between items-center p-4 border-b border-gray-700 sticky top-0 bg-gray-800 z-10">
               <h3 className="text-lg font-medium text-white">User Details: {selectedUser.username}</h3>
               <button
@@ -1053,29 +1055,26 @@ const AdminDashboard = () => {
               <div className="border-b border-gray-700">
                 <div className="flex space-x-4">
                   <button
-                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                      !loading.userHistory
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${!loading.userHistory
                         ? "border-indigo-500 text-indigo-400"
                         : "border-transparent text-gray-400"
-                    }`}
+                      }`}
                   >
                     Deposit History ({userHistory?.deposits.length || 0})
                   </button>
                   <button
-                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                      !loading.userHistory
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${!loading.userHistory
                         ? "border-indigo-500 text-indigo-400"
                         : "border-transparent text-gray-400"
-                    }`}
+                      }`}
                   >
                     Withdrawal History ({userHistory?.withdrawals.length || 0})
                   </button>
                   <button
-                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                      !loading.userHistory
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${!loading.userHistory
                         ? "border-indigo-500 text-indigo-400"
                         : "border-transparent text-gray-400"
-                    }`}
+                      }`}
                   >
                     Game History ({userHistory?.gameHistory.length || 0})
                   </button>
@@ -1115,13 +1114,12 @@ const AdminDashboard = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span
-                                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                    deposit.status === "APPROVED"
+                                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${deposit.status === "APPROVED"
                                       ? "bg-green-100 text-green-800"
                                       : deposit.status === "PENDING"
-                                      ? "bg-yellow-100 text-yellow-800"
-                                      : "bg-red-100 text-red-800"
-                                  }`}
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : "bg-red-100 text-red-800"
+                                    }`}
                                 >
                                   {deposit.status}
                                 </span>
@@ -1163,13 +1161,12 @@ const AdminDashboard = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span
-                                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                    withdrawal.status === "APPROVED"
+                                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${withdrawal.status === "APPROVED"
                                       ? "bg-green-100 text-green-800"
                                       : withdrawal.status === "PENDING"
-                                      ? "bg-yellow-100 text-yellow-800"
-                                      : "bg-red-100 text-red-800"
-                                  }`}
+                                        ? "bg-yellow-100 text-yellow-800"
+                                        : "bg-red-100 text-red-800"
+                                    }`}
                                 >
                                   {withdrawal.status}
                                 </span>
@@ -1223,11 +1220,10 @@ const AdminDashboard = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <span
-                                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                    game.result === "win"
+                                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${game.result === "win"
                                       ? "bg-green-100 text-green-800"
                                       : "bg-red-100 text-red-800"
-                                  }`}
+                                    }`}
                                 >
                                   {game.result.toUpperCase()}
                                 </span>

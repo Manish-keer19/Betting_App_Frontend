@@ -113,7 +113,7 @@
 
 
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTheme } from "../utils/ThemeContext";
 import logo from "../assets/logo.png";
 import { authService } from "../Services/authService";
@@ -122,10 +122,22 @@ import { setUser } from "../features/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+
+  const user = useSelector((state: any) => state.user);
+
+  useEffect(() => {
+
+    if (user) {
+
+      navigate("/")
+    }
+  },);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
