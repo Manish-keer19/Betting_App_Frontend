@@ -258,7 +258,7 @@ Admin can view full user data including wallet balance, referrals, and recent ac
 
 ## 👨‍💻 Developer
 
-**Developed by [Manish Keer](https://github.com/manish-creator)**
+**Developed by [Manish Keer](https://github.com/Manish-keer19)**
 
 🚀 **MERN Stack Developer | Real-Time Application Specialist**
 
